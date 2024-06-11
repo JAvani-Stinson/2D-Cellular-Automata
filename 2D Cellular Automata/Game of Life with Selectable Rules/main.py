@@ -29,6 +29,9 @@ conway_btn = pygame.Rect(WIDTH+10, 10, 180, 70)
 brian_surf = font.render("Brian's Brain", True, "white")
 brian_btn = pygame.Rect(WIDTH+10, 90, 180, 70)
 
+fred_surf = font.render("Fredkin", True, "white")
+fred_btn = pygame.Rect(WIDTH+10, 170, 180, 70)
+
 #initializes the screen and clock
 screen = pygame.display.set_mode((WIDTH+200,HEIGHT))
 
@@ -103,6 +106,48 @@ def draw_grid(positions, cells):
     #adds Brian's button
     pygame.draw.rect(screen, "blue", brian_btn)
     screen.blit(brian_surf, (brian_btn.x + 20, brian_btn.y + 23))
+
+    #add fredkin's button
+    pygame.draw.rect(screen, "blue", fred_btn)
+    screen.blit(fred_surf, (fred_btn.x + 50, fred_btn.y + 23))
+
+#rule_set for Fredkin
+def fredkin_adjust_grid(positions, cells):
+    all_neighbors = set()
+    new_positions = set()
+
+    #gets the neighbors of the living cells
+    for position in positions:
+        neighbors = get_neighbors(position)
+        all_neighbors.update(neighbors)
+
+        neighbors = list(filter(lambda x: x in positions, neighbors))
+
+        #checks if a living cells had 2 or 3 living neighbors to make it living on new grid
+        if len(neighbors) % 2 == 1:
+            new_positions.add(position)
+    
+    #checks the neighbor's neighbors
+    for position in all_neighbors:
+        neighbors = get_neighbors(position)
+
+        neighbors = list(filter(lambda x: x in positions, neighbors))
+
+        #if that neighbor had 3 living cells as neighbors, it brings it alive on the new grid
+        if len(neighbors) % 2 == 1:
+            new_positions.add(position)
+
+    #resets the cells
+    cells = new_cells_obj()
+
+    #updates the objects for the living cells
+    for position in new_positions:
+        col, row = position
+        cells["{}, {}".format(col, row)].status = 1
+
+    return (new_positions, cells)
+
+
 
 #rule_set for brian's brain
 def brian_adjust_grid(positions, cells):
@@ -253,6 +298,8 @@ def main():
                 (positions, cells) = conway_adjust_grid(positions, cells)
             elif rule_set == "Brian's Brain":
                 (positions, cells) = brian_adjust_grid(positions, cells)
+            elif rule_set == "Fredkin":
+                (positions, cells) = fredkin_adjust_grid(positions, cells)
         
         #initializes a way to see if the game is progressing
         if playing:
@@ -277,6 +324,9 @@ def main():
 
                 if brian_btn.collidepoint(event.pos):
                     rule_set = "Brian's Brain"
+
+                if fred_btn.collidepoint(event.pos):
+                    rule_set = "Fredkin"
 
             #allows players to add positions with clicks on grid
             if event.type == pygame.MOUSEBUTTONDOWN:
