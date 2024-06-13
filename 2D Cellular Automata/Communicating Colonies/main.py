@@ -13,6 +13,8 @@ RED = (220, 20, 60)
 GOLD = (255, 215,0)
 WHITE = (255, 255, 255)
 GREY = (128, 128, 128)
+GREEN = (0, 255, 0)
+PURPLE = (221, 160, 221)
 
 #initial conditions for the playable grid
 WIDTH, HEIGHT = 800, 800
@@ -70,6 +72,12 @@ def draw_grid(positions, cells):
             pygame.draw.rect(screen, GOLD, (*top_left, TILE_SIZE, TILE_SIZE))
         elif cells["{}, {}".format(col, row)].status == 2:
             pygame.draw.rect(screen, RED, (*top_left, TILE_SIZE, TILE_SIZE))
+        elif cells["{}, {}".format(col, row)].status == 3:
+            pygame.draw.rect(screen, BLUE, (*top_left, TILE_SIZE, TILE_SIZE))
+        elif cells["{}, {}".format(col, row)].status == 4:
+            pygame.draw.rect(screen, GREEN, (*top_left, TILE_SIZE, TILE_SIZE))
+        elif cells["{}, {}".format(col, row)].status == 100:
+            pygame.draw.rect(screen, PURPLE, (*top_left, TILE_SIZE, TILE_SIZE))
         
     #draws the lines for the grid
     for row in range(GRID_HEIGHT):
@@ -94,14 +102,10 @@ def adjust_grid(cells):
     for position in update_set:
         col, row = position
         status = cells["{}, {}".format(col, row)].status
-        neighbors = get_neighbors(position)
-        kernel_sum = 0
-        for neighbor in neighbors:
-            a, b = neighbor
-            kernel_sum += cells["{}, {}".format(a, b)].status
+        neighbors, kernel_sum = get_neighbors(position, cells)
 
         if status == 1:
-            if kernel_sum > 5:
+            if kernel_sum >= 8:
                 new_positions.add((col, row))
                 new_cells["{}, {}".format(col, row)].status = 2
 
@@ -113,30 +117,119 @@ def adjust_grid(cells):
                     new_cells["{}, {}".format(col, row)].status = 1
 
                 dup_location = random.randrange(0,4)
-                if new_cells["{}, {}".format(col - 1, row)].status == 0 and dup_location == 0:
-                    new_positions.add((col - 1, row))
-                    new_cells["{}, {}".format(col - 1, row)].status = 1
-                elif new_cells["{}, {}".format(col + 1, row)].status == 0 and dup_location == 1:
-                    new_positions.add((col + 1, row))
-                    new_cells["{}, {}".format(col + 1, row)].status = 1
-                elif new_cells["{}, {}".format(col, row + 1)].status == 0 and dup_location == 2:
-                    new_positions.add((col, row + 1))
-                    new_cells["{}, {}".format(col, row + 1)].status = 1
-                elif new_cells["{}, {}".format(col, row - 1)].status == 0 and dup_location == 3:
-                    new_positions.add((col, row - 1))
-                    new_cells["{}, {}".format(col, row - 1)].status = 1
+                if new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row % GRID_HEIGHT)].status == 0 and dup_location == 0:
+                    new_positions.add(((col - 1) % GRID_WIDTH, row % GRID_HEIGHT))
+                    new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row % GRID_HEIGHT)].status = 1
+                elif new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row % GRID_HEIGHT)].status == 0 and dup_location == 1:
+                    new_positions.add(((col + 1) % GRID_WIDTH, row % GRID_HEIGHT))
+                    new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row % GRID_HEIGHT)].status = 1
+                elif new_cells["{}, {}".format(col % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status == 0 and dup_location == 2:
+                    new_positions.add((col % GRID_WIDTH, (row + 1) % GRID_HEIGHT))
+                    new_cells["{}, {}".format(col % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status = 1
+                elif new_cells["{}, {}".format(col % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status == 0 and dup_location == 3:
+                    new_positions.add((col % GRID_WIDTH, (row - 1) % GRID_HEIGHT))
+                    new_cells["{}, {}".format(col % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status = 1
+
+        if status == 2:
+            if kernel_sum == 21:
+                new_positions.add((col, row))
+                new_cells["{}, {}".format(col, row)].status = 3
+            elif kernel_sum > 15:
+                new_positions.add((col, row))
+                new_cells["{}, {}".format(col, row)].status = 4
+                
+            else:
+                new_positions.add((col, row))
+                new_cells["{}, {}".format(col, row)].status = 2
+
+                dup_location = random.randrange(0,4)
+                if dup_location == 0:
+                    if new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row % GRID_HEIGHT)].status == 0:
+                        new_positions.add(((col - 1) % GRID_WIDTH, row % GRID_HEIGHT))
+                        new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row % GRID_HEIGHT)].status = 1
+                    elif new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row % GRID_HEIGHT)].status == 1:
+                        new_positions.add(((col - 1) % GRID_WIDTH, row))
+                        new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row % GRID_HEIGHT)].status = 2
+                elif dup_location == 1:
+                    if new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row % GRID_HEIGHT)].status == 0:
+                        new_positions.add(((col + 1) % GRID_WIDTH, row % GRID_HEIGHT))
+                        new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row % GRID_HEIGHT)].status = 1
+                    elif new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row % GRID_HEIGHT)].status == 1:
+                        new_positions.add(((col + 1) % GRID_WIDTH, row % GRID_HEIGHT))
+                        new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row % GRID_HEIGHT)].status = 2
+                elif dup_location == 2:
+                    if new_cells["{}, {}".format(col % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status == 0:
+                        new_positions.add((col % GRID_WIDTH, (row + 1) % GRID_HEIGHT))
+                        new_cells["{}, {}".format(col % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status = 1
+                    elif new_cells["{}, {}".format(col % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status == 1:
+                        new_positions.add((col % GRID_WIDTH, (row + 1) % GRID_HEIGHT))
+                        new_cells["{}, {}".format(col % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status = 2
+                elif dup_location == 3:
+                    if new_cells["{}, {}".format(col % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status == 0:
+                        new_positions.add((col % GRID_WIDTH, (row - 1) % GRID_HEIGHT))
+                        new_cells["{}, {}".format(col % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status = 1
+                    elif new_cells["{}, {}".format(col % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status == 1:
+                        new_positions.add((col % GRID_WIDTH, (row - 1) % GRID_HEIGHT))
+                        new_cells["{}, {}".format(col % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status = 2
+
+        if status == 4:
+            new_positions.add((col, row))
+            new_cells["{}, {}".format(col, row)].status = 4
+
+            dup_location = random.randrange(0,4)
+            if dup_location == 0:
+                if new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row % GRID_HEIGHT)].status not in [0, 1, 3]:
+                    new_positions.add(((col - 1) % GRID_WIDTH, row % GRID_HEIGHT))
+                    new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row % GRID_HEIGHT)].status = 4
+            elif dup_location == 1:
+                if new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row % GRID_HEIGHT)].status not in [0, 1, 3]:
+                    new_positions.add(((col + 1) % GRID_WIDTH, row % GRID_HEIGHT))
+                    new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row % GRID_HEIGHT)].status = 4
+            elif dup_location == 2:
+                if new_cells["{}, {}".format(col % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status not in [0, 1, 3]:
+                    new_positions.add((col % GRID_WIDTH, (row - 1) % GRID_HEIGHT))
+                    new_cells["{}, {}".format(col % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status = 4
+            elif dup_location == 3:
+                if new_cells["{}, {}".format(col % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status not in [0, 1, 3]:
+                    new_positions.add((col % GRID_WIDTH, (row + 1) % GRID_HEIGHT))
+                    new_cells["{}, {}".format(col % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status = 4
+
+        if status == 3:
+            sum3 = 0
+            sum4 = 0
+            for neighbor in neighbors:
+                a, b = neighbor
+                if cells["{}, {}".format(a, b)].status == 3:
+                    sum3 += 1
+                elif cells["{}, {}".format(a, b)].status == 4:
+                    sum4 += 1
+
+            if sum3 == 8:
+                new_positions.add((col, row))
+                new_cells["{}, {}".format(col, row)].status = 100
+            
+
+            else:
+                new_positions.add((col, row))
+                new_cells["{}, {}".format(col, row)].status = 3
+                
+                if sum4 == 8:
+                    for neighbor in neighbors:
+                        a, b = neighbor
+                        new_positions.add(neighbor)
+                        new_cells["{}, {}".format(a, b)].status = 3
+
+        if status == 100:
+            new_positions.add((col, row))
+            new_cells["{}, {}".format(col, row)].status = 100
 
     return (new_positions, new_cells)
 
-#rule_sets
-def update1(col, row):
-
-    return (i, j)
-
 #gathers a cell's Moore neighborhood
-def get_neighbors(pos):
+def get_neighbors(pos, cells):
     x,y = pos
     neighbors = []
+    kernel_sum = 0
     for dx in [-1,0,1]:
         for dy in [-1,0,1]:
             if dx == 0 and dy == 0:
@@ -144,8 +237,13 @@ def get_neighbors(pos):
         
             #adds neighbors to list
             neighbors.append(((x + dx) % GRID_WIDTH, (y + dy) % GRID_HEIGHT))
+    
+    #computes a kernel sum
+    for neighbor in neighbors:
+            a, b = neighbor
+            kernel_sum += cells["{}, {}".format(a, b)].status
 
-    return neighbors
+    return (neighbors, kernel_sum)
 
 #saves the images for each grid update
 def make_png(screen, num):
