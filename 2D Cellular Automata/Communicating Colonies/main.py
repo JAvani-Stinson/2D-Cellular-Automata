@@ -2,6 +2,7 @@ import pygame
 import random
 import os
 from datetime import datetime
+import glob
 
 #initiate pygame
 pygame.init()
@@ -355,6 +356,11 @@ def main():
 
     #creates movie when the game is exited
     make_mp4()
+
+    #empties images folder
+    files = glob.glob('/Users/jstinson/Desktop/2D Cellular Automata/Communicating Colonies/Images/*')
+    for f in files:
+        os.remove(f)
 
     pygame.quit()
 
