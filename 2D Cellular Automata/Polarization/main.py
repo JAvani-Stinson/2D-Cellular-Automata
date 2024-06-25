@@ -242,8 +242,8 @@ def adjust_grid(positions, cells):
             new_positions.add(((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT))
             new_cells["{}, {}".format((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status = orig_status
         elif directions[0][1] == "rightdown" and ((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT) not in new_positions and ((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT) not in positions:
-            new_positions.add(((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT))
-            new_cells["{}, {}".format((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status = orig_status
+            new_positions.add(((col + 1) % GRID_WIDTH, (row + 1) % GRID_HEIGHT))
+            new_cells["{}, {}".format((col + 1) % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status = orig_status
         else:
             new_positions.add(position)
             new_cells["{}, {}".format(col, row)].status = orig_status
