@@ -38,6 +38,18 @@ screen = pygame.display.set_mode((WIDTH+200,HEIGHT))
 
 clock = pygame.time.Clock()
 
+#Create a class for te grid
+class Grid:
+    def __init__(self, max_wid, min_wid, max_len, min_len):
+        self.Max_Width = max_wid
+        self.Min_Width = min_wid
+        self.Max_Length = max_len
+        self.Min_Length = min_len
+        self.positions = set()
+        for i in range(self.Min_Width, self.Max_Width + 1):
+            for j in range(self.Min_Length, self.Max_Length + 1):
+                self.positions.add((i, j))
+
 #Create a class for the cells by location on grid
 class Cell:
     def __init__(self, i, j):
@@ -46,6 +58,7 @@ class Cell:
         self.status = 0
         self.color = "white"
         self.group = ""
+        self.grid = ""
 
     def get_energy(self, cells):
         energy = 0
@@ -55,14 +68,17 @@ class Cell:
             for b in range(-1, 2):
                 if a in [-1, 1] or b in [-1, 1]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format(self.i + a, self.j + b)].status == 100:
-                            energy -= 40
-                        elif cells["{}, {}".format(self.i + a, self.j + b)].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format(self.i + a, self.j + b) ].status == self.status:
-                            energy -= 15
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format(self.i + a, self.j + b)].status == 100:
+                                energy -= 40
+                            elif cells["{}, {}".format(self.i + a, self.j + b)].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format(self.i + a, self.j + b) ].status == self.status:
+                                energy -= 15
+                            else:
+                                energy += 19
                         else:
-                            energy += 19
+                            energy += 0
                     except:
                         energy += 0
 
@@ -70,14 +86,17 @@ class Cell:
             for b in range(-2, 3):
                 if a in [-2, 2] or b in [-2, 2]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a), (self.j + b))].status == 100:
-                            energy -= 35
-                        elif cells["{}, {}".format((self.i + a), (self.j + b))].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format((self.i + a), (self.j + b)) ].status == self.status:
-                            energy -= 13
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a), (self.j + b))].status == 100:
+                                energy -= 35
+                            elif cells["{}, {}".format((self.i + a), (self.j + b))].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a), (self.j + b)) ].status == self.status:
+                                energy -= 13
+                            else:
+                                energy += 17
                         else:
-                            energy += 17
+                            energy += 0
                     except:
                         energy += 0
 
@@ -85,14 +104,17 @@ class Cell:
             for b in range(-3, 4):
                 if a in [-3, 3] or b in [-3, 3]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
-                            energy -= 30
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
-                            energy -= 10
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                                energy -= 30
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                                energy -= 10
+                            else:
+                                energy += 14
                         else:
-                            energy += 14
+                            energy += 0
                     except:
                         energy += 0
 
@@ -100,14 +122,17 @@ class Cell:
             for b in range(-4, 5):
                 if a in [-4, 4] or b in [-4, 4]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
-                            energy -= 25
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
-                            energy -= 7
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                                energy -= 25
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                                energy -= 7
+                            else:
+                                energy += 11
                         else:
-                            energy += 11
+                            energy += 0 
                     except:
                         energy += 0
             
@@ -115,14 +140,17 @@ class Cell:
             for b in range(-5, 6):
                 if a in [-5, 5] or b in [-5, 5]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
-                            energy -= 20
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
-                            energy -= 6
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                                energy -= 20
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                                energy -= 6
+                            else:
+                                energy += 10
                         else:
-                            energy += 10
+                            energy += 0
                     except:
                         energy += 0
 
@@ -130,14 +158,17 @@ class Cell:
             for b in range(-6, 7):
                 if a in [-6, 6] or b in [-6, 6]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
-                            energy -= 18
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
-                            energy -= 5
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                                energy -= 18
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                                energy -= 5
+                            else:
+                                energy += 9
                         else:
-                            energy += 9
+                            energy += 0
                     except:
                         energy += 0
 
@@ -145,14 +176,17 @@ class Cell:
             for b in range(-7, 8):
                 if a in [-7, 7] or b in [-7, 7]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
-                            energy -= 15
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
-                            energy -= 4
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                                energy -= 15
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                                energy -= 4
+                            else:
+                                energy += 8
                         else:
-                            energy += 8
+                            energy += 0
                     except:
                         energy += 0
 
@@ -160,14 +194,17 @@ class Cell:
             for b in range(-8, 9):
                 if a in [-8, 8] or b in [-8, 8]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
-                            energy -= 12
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
-                            energy -= 3
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                                energy -= 12
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                                energy -= 3
+                            else:
+                                energy += 7
                         else:
-                            energy += 7
+                            energy += 0
                     except:
                         energy += 0
 
@@ -175,14 +212,17 @@ class Cell:
             for b in range(-9, 10):
                 if a in [-9, 9] or b in [-9, 9]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
-                            energy -= 10
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                                energy -= 10
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                                energy -= 2
+                            else:
+                                energy += 6
+                        else: 
                             energy += 0
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
-                            energy -= 2
-                        else:
-                            energy += 6
                     except:
                         energy += 0 
 
@@ -190,14 +230,17 @@ class Cell:
             for b in range(-10, 11):
                 if a in [-10, 10] or b in [-10, 10]:
                     try:
-                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
-                            energy -= 8
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
-                            energy += 0
-                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
-                            energy -= 1
+                        if (self.i + a, self.j + b) in self.grid.positions:
+                            if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                                energy -= 8
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                                energy += 0
+                            elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                                energy -= 1
+                            else:
+                                energy += 5
                         else:
-                            energy += 5
+                            energy += 0
                     except:
                         energy += 0 
     
@@ -212,19 +255,22 @@ def get_total_energy(cells, positions):
     return energy
 
 #resets the cell objects for the grid that can be used to clear the old
-def new_cells_obj():
+def new_cells_obj(grids):
     cells = {}
     for i in range(GRID_WIDTH):
         for j in range(GRID_HEIGHT):
             cells["{}, {}".format(i, j)] = Cell(i, j)
+            for grid in grids:
+                if (i, j) in grid.positions:
+                    cells["{}, {}".format(i, j)].grid = grid
     return cells
 
 
 #Generates a random play grid
-def gen(num):
+def gen(num, grids):
 
     #creates a copy of cell objects
-    cells = new_cells_obj()
+    cells = new_cells_obj(grids)
 
     #randomly generation positions within grid restraints
     positions = set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num)])
@@ -270,6 +316,10 @@ def draw_grid(positions, cells, color_groups):
                 pygame.draw.rect(screen, (30, 0, 0),(*top_left, TILE_SIZE, TILE_SIZE))
             elif cells["{}, {}".format(col, row)].group == 8:
                 pygame.draw.rect(screen, (189, 18, 244),(*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 8:
+                pygame.draw.rect(screen, (0, 194, 0),(*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 8:
+                pygame.draw.rect(screen, (111, 111, 254),(*top_left, TILE_SIZE, TILE_SIZE))
     
     #draws the lines for the grid
     pygame.draw.line(screen, GREY, ((GRID_HEIGHT) * TILE_SIZE, 0), ((GRID_HEIGHT) * TILE_SIZE, HEIGHT))
@@ -328,13 +378,14 @@ def check_energies(position, orig_status, positions, new_positions, directions, 
     return directions
 
 #rule_set
-def adjust_grid(positions, cells):
+def adjust_grid(positions, cells, grids):
     new_positions = set()
-    new_cells = new_cells_obj()
+    new_cells = new_cells_obj(grids)
             
     for position in positions:
         col, row = position
         orig_status = cells["{}, {}".format(col, row)].status
+        pos_grid = cells["{}, {}".format(col, row)].grid
 
         if orig_status == 100:
             new_positions.add(position)
@@ -344,24 +395,24 @@ def adjust_grid(positions, cells):
             #initializes some high energies 
             directions = [(1000, "left"), (1000, "right"), (1000, "up"), (1000, "down"), (1000, "leftup"), (1000, "leftdown"), (1000, "rightup"), (1000, "rightdown"), (cells["{}, {}".format(col, row)].get_energy(cells), "stay")]
 
-            if col == 0:
+            if col == pos_grid.Min_Width:
                 directions.remove((1000, "left"))
                 directions.remove((1000, "leftup"))
                 directions.remove((1000, "leftdown"))
 
-            if col == GRID_WIDTH - 1:
+            if col == pos_grid.Max_Width:
                 directions.remove((1000, "right"))
                 directions.remove((1000, "rightup"))
                 directions.remove((1000, "rightdown"))
 
-            if row == 0:
+            if row == pos_grid.Min_Length:
                 directions.remove((1000, "up"))
                 if col != 0:
                     directions.remove((1000, "leftup"))
                 if col != GRID_WIDTH - 1:
                     directions.remove((1000, "rightup"))
 
-            if row == GRID_HEIGHT - 1:
+            if row == pos_grid.Max_Length:
                 directions.remove((1000, "down"))
                 if col != 0:
                     directions.remove((1000, "leftdown"))
@@ -413,7 +464,7 @@ def grouping(positions, cells):
         col, row = position
         group_potential = 0
 
-        neighbors = get_neighbors(position)
+        neighbors = get_neighbors(position, cells)
         errbody = [position]
 
         for neighbor in neighbors:
@@ -426,7 +477,7 @@ def grouping(positions, cells):
             new_group = set()
             for pos in errbody:
                 new_group.add(pos)
-                neighbors1 = get_neighbors(pos)
+                neighbors1 = get_neighbors(pos, cells)
                 for neighbor1 in neighbors1:
                     c, d = neighbor1
                     if cells["{}, {}".format(c, d)].status == cells["{}, {}".format(col, row)].status:
@@ -459,9 +510,9 @@ def grouping(positions, cells):
 
     return new_groups, cells
 
-def shifting(positions, groups, cells):
+def shifting(positions, groups, cells, grids):
     amalg = set()
-    new_cells = new_cells_obj()
+    new_cells = new_cells_obj(grids)
     new_positions = set()
 
     for cell in cells:
@@ -485,7 +536,8 @@ def shifting(positions, groups, cells):
 
         for pos in group:
             x, y = pos
-            if x == 0:
+            pos_grid = cells["{}, {}".format(x, y)].grid
+            if x == pos_grid.Min_Width:
                 if "left" in directions:
                     directions.remove("left")
                 if "leftup" in directions:
@@ -493,7 +545,7 @@ def shifting(positions, groups, cells):
                 if "leftdown" in directions:
                     directions.remove("leftdown")
 
-            if x == GRID_WIDTH - 1:
+            if x == pos_grid.Max_Width:
                 if "right" in directions:
                     directions.remove("right")
                 if "rightup" in directions:
@@ -501,7 +553,7 @@ def shifting(positions, groups, cells):
                 if "rightdown" in directions:
                     directions.remove("rightdown")
 
-            if y == 0:
+            if y == pos_grid.Min_Length:
                 if "up" in directions:
                     directions.remove("up")
                 if "leftup" in directions:
@@ -509,7 +561,7 @@ def shifting(positions, groups, cells):
                 if "rightup" in directions:
                     directions.remove("rightup")
 
-            if y == GRID_HEIGHT - 1:
+            if y == pos_grid.Max_Length:
                 if "down" in directions:
                     directions.remove("down")
                 if "rightdown" in directions:
@@ -657,11 +709,12 @@ def shifting(positions, groups, cells):
         if pos not in amalg:
 
             x, y = pos
+            pos_grid = cells["{}, {}".format(x, y)].grid
             orig_status = cells["{}, {}".format(x, y)].status
 
             directions = ["left", "right", "up", "down", "leftup", "leftdown", "rightup", "rightdown", "stay"]
 
-            if x == 0:
+            if x == pos_grid.Min_Width:
                 for dir in directions:
                     if dir == "left":
                         directions.remove("left")
@@ -670,7 +723,7 @@ def shifting(positions, groups, cells):
                     if dir == "left":
                         directions.remove("leftup")
 
-            if x == GRID_WIDTH - 1:
+            if x == pos_grid.Max_Width:
                 for dir in directions:
                     if dir == "right":
                         directions.remove("right")
@@ -678,7 +731,7 @@ def shifting(positions, groups, cells):
                         directions.remove("rightdown")
                     if dir == "left":
                         directions.remove("rightup")
-            if y == 0:
+            if y == pos_grid.Min_Length:
                 for dir in directions:
                     if dir == "up":
                         directions.remove("up")
@@ -687,7 +740,7 @@ def shifting(positions, groups, cells):
                     if dir == "rightup":
                         directions.remove("rightup")
 
-            if y == GRID_HEIGHT - 1:
+            if y == pos_grid.Max_Length:
                 for dir in directions:
                     if dir == "down":
                         directions.remove("down")
@@ -765,26 +818,27 @@ def shifting(positions, groups, cells):
     return (new_positions, new_cells)
 
 #gathers a cell's Von Neumann neighborhood
-def get_neighbors(pos):
+def get_neighbors(pos, cells):
     x,y = pos
+    pos_grid = cells["{}, {}".format(x, y)].grid
     neighbors = []
     potential_neighbors = [(-1, 0), (1, 0), (0, 1), (0, -1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
 
-    if x == 0:
+    if x == pos_grid.Min_Width:
         potential_neighbors.remove((-1, 0))
         potential_neighbors.remove((-1, 1))
         potential_neighbors.remove((-1, -1))
-    if x == GRID_WIDTH - 1:
+    if x == pos_grid.Max_Width:
         potential_neighbors.remove((1, 0))
         potential_neighbors.remove((1, 1))
         potential_neighbors.remove((1, -1))
-    if y == 0:
+    if y == pos_grid.Min_Length:
         potential_neighbors.remove((0, -1))
         if (1, -1) in potential_neighbors:
             potential_neighbors.remove((1, -1))
         if (-1, -1) in potential_neighbors:
             potential_neighbors.remove((-1, -1))
-    if y == GRID_HEIGHT - 1:
+    if y == pos_grid.Max_Length:
         potential_neighbors.remove((0, 1))
         if (-1, 1) in potential_neighbors:
             potential_neighbors.remove((-1, 1))
@@ -841,8 +895,12 @@ def main():
     color_groups = False
     groups = []
 
+    #creates a list of grids and the initial grid
+    grids = []
+    grids.append(Grid(GRID_WIDTH - 1, 0, GRID_HEIGHT - 1, 0))
+
     #creates the cell objects for the grid
-    cells = new_cells_obj()
+    cells = new_cells_obj(grids)
 
     #initializes positions
     positions = set()
@@ -873,7 +931,7 @@ def main():
             num = make_png(screen, num)
             
             #determines the rule_set
-            positions, cells = adjust_grid(positions, cells)
+            positions, cells = adjust_grid(positions, cells, grids)
             groups, cells = grouping(positions, cells)
 
             blackies = 0 
@@ -901,7 +959,7 @@ def main():
             num = make_png(screen, num)
             
             #determines the rule_set
-            positions, cells = shifting(positions, groups, cells)
+            positions, cells = shifting(positions, groups, cells, grids)
 
             blackies = 0 
             grey = 0
@@ -979,13 +1037,13 @@ def main():
                 #clears the board by emptying positions and reseting cells
                 if event.key == pygame.K_c:
                     positions = set()
-                    cells = new_cells_obj()
+                    cells = new_cells_obj(grids)
                     playing = False
                     count = 0
 
                 #generates a random set of positions
                 if event.key == pygame.K_g:
-                    (positions, cells) = gen(random.randrange(3, 5) * GRID_WIDTH)
+                    (positions, cells) = gen(random.randrange(3, 5) * GRID_WIDTH, grids)
                     print("new generation")
 
                 #toggles grouping
@@ -1010,5 +1068,7 @@ def main():
 
     pygame.quit()
 
+if __name__ == "__main__":
+    main()
 if __name__ == "__main__":
     main()
