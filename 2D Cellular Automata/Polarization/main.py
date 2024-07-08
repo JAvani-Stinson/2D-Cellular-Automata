@@ -45,6 +45,7 @@ class Cell:
         self.j = j
         self.status = 0
         self.color = "white"
+        self.group = ""
 
     def get_energy(self, cells):
         energy = 0
@@ -53,123 +54,153 @@ class Cell:
         for a in range(-1, 2):
             for b in range(-1, 2):
                 if a in [-1, 1] or b in [-1, 1]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 40
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
+                    try:
+                        if self.status == 1 and cells["{}, {}".format(self.i + a, self.j + b)].status == 100:
+                            energy -= 40
+                        elif cells["{}, {}".format(self.i + a, self.j + b)].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format(self.i + a, self.j + b) ].status == self.status:
+                            energy -= 15
+                        else:
+                            energy += 19
+                    except:
                         energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 15
-                    else:
-                        energy += 19
 
         for a in range(-2, 3):
             for b in range(-2, 3):
                 if a in [-2, 2] or b in [-2, 2]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 35
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a), (self.j + b))].status == 100:
+                            energy -= 35
+                        elif cells["{}, {}".format((self.i + a), (self.j + b))].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a), (self.j + b)) ].status == self.status:
+                            energy -= 13
+                        else:
+                            energy += 17
+                    except:
                         energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 13
-                    else:
-                        energy += 17
 
         for a in range(-3, 4):
             for b in range(-3, 4):
                 if a in [-3, 3] or b in [-3, 3]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 30
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                            energy -= 30
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                            energy -= 10
+                        else:
+                            energy += 14
+                    except:
                         energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 10
-                    else:
-                        energy += 14
 
         for a in range(-4, 5):
             for b in range(-4, 5):
                 if a in [-4, 4] or b in [-4, 4]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 25
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                            energy -= 25
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                            energy -= 7
+                        else:
+                            energy += 11
+                    except:
                         energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 7
-                    else:
-                        energy += 11
             
         for a in range(-5, 6):
             for b in range(-5, 6):
                 if a in [-5, 5] or b in [-5, 5]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 20
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                            energy -= 20
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                            energy -= 6
+                        else:
+                            energy += 10
+                    except:
                         energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 6
-                    else:
-                        energy += 10
 
         for a in range(-6, 7):
             for b in range(-6, 7):
                 if a in [-6, 6] or b in [-6, 6]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 18
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                            energy -= 18
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                            energy -= 5
+                        else:
+                            energy += 9
+                    except:
                         energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 5
-                    else:
-                        energy += 9
 
         for a in range(-7, 8):
             for b in range(-7, 8):
                 if a in [-7, 7] or b in [-7, 7]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 15
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                            energy -= 15
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                            energy -= 4
+                        else:
+                            energy += 8
+                    except:
                         energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 4
-                    else:
-                        energy += 8
 
         for a in range(-8, 9):
             for b in range(-8, 9):
                 if a in [-8, 8] or b in [-8, 8]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 12
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                            energy -= 12
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                            energy -= 3
+                        else:
+                            energy += 7
+                    except:
                         energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 3
-                    else:
-                        energy += 7
 
         for a in range(-9, 10):
             for b in range(-9, 10):
                 if a in [-9, 9] or b in [-9, 9]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 10
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
-                        energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 2
-                    else:
-                        energy += 6
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                            energy -= 10
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                            energy -= 2
+                        else:
+                            energy += 6
+                    except:
+                        energy += 0 
 
         for a in range(-10, 11):
             for b in range(-10, 11):
                 if a in [-10, 10] or b in [-10, 10]:
-                    if self.status == 1 and cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 100:
-                        energy -= 8
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT)].status == 0:
-                        energy += 0
-                    elif cells["{}, {}".format((self.i + a) % GRID_WIDTH, (self.j + b) % GRID_HEIGHT) ].status == self.status:
-                        energy -= 1
-                    else:
-                        energy += 5
-
+                    try:
+                        if self.status == 1 and cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 100:
+                            energy -= 8
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) )].status == 0:
+                            energy += 0
+                        elif cells["{}, {}".format((self.i + a) , (self.j + b) ) ].status == self.status:
+                            energy -= 1
+                        else:
+                            energy += 5
+                    except:
+                        energy += 0 
+    
         return energy
                     
 #get energy of the grid
@@ -207,18 +238,38 @@ def gen(num):
     return (positions, cells)
 
 #Visually adds tiles to the grid
-def draw_grid(positions, cells):
+def draw_grid(positions, cells, color_groups):
     for position in positions:
         col, row = position
         top_left = (col * TILE_SIZE, row * TILE_SIZE)
 
         #specifies the color of a given tile
-        if cells["{}, {}".format(col, row)].status == 1:
-            pygame.draw.rect(screen, BLACK, (*top_left, TILE_SIZE, TILE_SIZE))
-        elif cells["{}, {}".format(col, row)].status == 2:
-            pygame.draw.rect(screen, GREY, (*top_left, TILE_SIZE, TILE_SIZE))
-        elif cells["{}, {}".format(col, row)].status == 100:
-            pygame.draw.rect(screen, (255, 192, 203),(*top_left, TILE_SIZE, TILE_SIZE))
+        if not color_groups:
+            if cells["{}, {}".format(col, row)].status == 1:
+                pygame.draw.rect(screen, BLACK, (*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].status == 2:
+                pygame.draw.rect(screen, GREY, (*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].status == 100:
+                pygame.draw.rect(screen, (255, 192, 203),(*top_left, TILE_SIZE, TILE_SIZE))
+        elif color_groups:
+            if cells["{}, {}".format(col, row)].group == 0:
+                pygame.draw.rect(screen, BLACK, (*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 1:
+                pygame.draw.rect(screen, GREY, (*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 2:
+                pygame.draw.rect(screen, (255, 192, 203),(*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 3:
+                pygame.draw.rect(screen, (18, 123, 203),(*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 4:
+                pygame.draw.rect(screen, (150, 100, 38),(*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 5:
+                pygame.draw.rect(screen, (200, 0, 100),(*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 6:
+                pygame.draw.rect(screen, (0, 0, 240),(*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 7:
+                pygame.draw.rect(screen, (30, 0, 0),(*top_left, TILE_SIZE, TILE_SIZE))
+            elif cells["{}, {}".format(col, row)].group == 8:
+                pygame.draw.rect(screen, (189, 18, 244),(*top_left, TILE_SIZE, TILE_SIZE))
     
     #draws the lines for the grid
     pygame.draw.line(screen, GREY, ((GRID_HEIGHT) * TILE_SIZE, 0), ((GRID_HEIGHT) * TILE_SIZE, HEIGHT))
@@ -240,29 +291,29 @@ def check_energies(position, orig_status, positions, new_positions, directions, 
 
     for i in range(len(directions)):
         if directions[i][1] == "left":
-            x = (col - 1) % GRID_WIDTH
+            x = (col - 1)
             y = row
         elif directions[i][1] == "right":
-            x = (col + 1) % GRID_WIDTH
+            x = (col + 1)
             y = row
         elif directions[i][1] == "up":
-            y = (row - 1) % GRID_HEIGHT
+            y = (row - 1)
             x = col
         elif directions[i][1] == "down":
-            y = (row + 1) % GRID_HEIGHT
+            y = (row + 1)
             x = col
         elif directions[i][1] == "leftup":
-            x = (col - 1) % GRID_WIDTH
-            y = (row - 1) % GRID_HEIGHT
+            x = (col - 1)
+            y = (row - 1)
         elif directions[i][1] == "leftdown":
-            x = (col - 1) % GRID_WIDTH
-            y = (row + 1) % GRID_HEIGHT
+            x = (col - 1)
+            y = (row + 1)
         elif directions[i][1] == "rightup":
-            x = (col + 1) % GRID_WIDTH
-            y = (row - 1) % GRID_HEIGHT
+            x = (col + 1)
+            y = (row - 1)
         elif directions[i][1] == "rightdown":
-            x = (col + 1) % GRID_WIDTH
-            y = (row + 1) % GRID_HEIGHT
+            x = (col + 1)
+            y = (row + 1)
 
         if directions[i][1] != "stay" and (x, y) not in new_positions and (x,y) not in positions:
             cells["{}, {}".format(col, row)].status = 0
@@ -270,6 +321,7 @@ def check_energies(position, orig_status, positions, new_positions, directions, 
             directions[i] = (cells["{}, {}".format(x, y)].get_energy(cells), directions[i][1])
             cells["{}, {}".format(x, y)].status = 0
             cells["{}, {}".format(col, row)].status = orig_status
+
         
     directions.sort()
 
@@ -292,40 +344,69 @@ def adjust_grid(positions, cells):
             #initializes some high energies 
             directions = [(1000, "left"), (1000, "right"), (1000, "up"), (1000, "down"), (1000, "leftup"), (1000, "leftdown"), (1000, "rightup"), (1000, "rightdown"), (cells["{}, {}".format(col, row)].get_energy(cells), "stay")]
 
+            if col == 0:
+                directions.remove((1000, "left"))
+                directions.remove((1000, "leftup"))
+                directions.remove((1000, "leftdown"))
+
+            if col == GRID_WIDTH - 1:
+                directions.remove((1000, "right"))
+                directions.remove((1000, "rightup"))
+                directions.remove((1000, "rightdown"))
+
+            if row == 0:
+                directions.remove((1000, "up"))
+                if col != 0:
+                    directions.remove((1000, "leftup"))
+                if col != GRID_WIDTH - 1:
+                    directions.remove((1000, "rightup"))
+
+            if row == GRID_HEIGHT - 1:
+                directions.remove((1000, "down"))
+                if col != 0:
+                    directions.remove((1000, "leftdown"))
+                if col != GRID_WIDTH - 1:
+                    directions.remove((1000, "rightdown"))
+
             #iterates over all possible directions to move to.
             directions = check_energies(position, orig_status, positions, new_positions, directions, cells)
                     
-            if directions[0][1] == "left" and ((col - 1) % GRID_WIDTH, row) not in new_positions and ((col - 1) % GRID_WIDTH, row) not in positions:
-                new_positions.add(((col - 1) % GRID_WIDTH, row))
-                new_cells["{}, {}".format((col - 1) % GRID_WIDTH, row)].status = orig_status
-            elif directions[0][1] == "right" and ((col + 1) % GRID_WIDTH, row) not in new_positions and ((col + 1) % GRID_WIDTH, row) not in positions:
-                new_positions.add(((col + 1) % GRID_WIDTH, row))
-                new_cells["{}, {}".format((col + 1) % GRID_WIDTH, row)].status = orig_status
-            elif directions[0][1] == "up" and (col, (row - 1) % GRID_HEIGHT) not in new_positions and (col, (row - 1) % GRID_HEIGHT) not in positions:
-                new_positions.add((col, (row - 1) % GRID_HEIGHT))
-                new_cells["{}, {}".format(col, (row - 1) % GRID_HEIGHT)].status = orig_status
-            elif directions[0][1] == "down" and (col, (row + 1) % GRID_HEIGHT) not in new_positions and (col, (row + 1) % GRID_HEIGHT) not in positions:
-                new_positions.add((col, (row + 1) % GRID_HEIGHT))
-                new_cells["{}, {}".format(col, (row + 1) % GRID_HEIGHT)].status = orig_status
-            elif directions[0][1] == "leftup" and ((col - 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT) not in new_positions and ((col - 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT) not in positions:
-                new_positions.add(((col - 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT))
-                new_cells["{}, {}".format((col - 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status = orig_status
-            elif directions[0][1] == "leftdown" and ((col - 1) % GRID_WIDTH, (row + 1) % GRID_HEIGHT) not in new_positions and ((col - 1) % GRID_WIDTH, (row + 1) % GRID_HEIGHT) not in positions:
-                new_positions.add(((col - 1) % GRID_WIDTH, (row + 1) % GRID_HEIGHT))
-                new_cells["{}, {}".format((col - 1) % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status = orig_status
-            elif directions[0][1] == "rightup" and ((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT) not in new_positions and ((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT) not in positions:
-                new_positions.add(((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT))
-                new_cells["{}, {}".format((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT)].status = orig_status
-            elif directions[0][1] == "rightdown" and ((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT) not in new_positions and ((col + 1) % GRID_WIDTH, (row - 1) % GRID_HEIGHT) not in positions:
-                new_positions.add(((col + 1) % GRID_WIDTH, (row + 1) % GRID_HEIGHT))
-                new_cells["{}, {}".format((col + 1) % GRID_WIDTH, (row + 1) % GRID_HEIGHT)].status = orig_status
+            if directions[0][1] == "left" and ((col - 1), row) not in new_positions and ((col - 1), row) not in positions:
+                new_cells["{}, {}".format((col - 1), row)].status = orig_status
+                new_positions.add(((col - 1), row))
+            elif directions[0][1] == "right" and ((col + 1), row) not in new_positions and ((col + 1), row) not in positions:
+                new_cells["{}, {}".format((col + 1), row)].status = orig_status
+                new_positions.add(((col + 1), row))
+            elif directions[0][1] == "up" and (col, (row - 1)) not in new_positions and (col, (row - 1)) not in positions:
+                new_cells["{}, {}".format(col, (row - 1))].status = orig_status
+                new_positions.add((col, (row - 1)))
+            elif directions[0][1] == "down" and (col, (row + 1)) not in new_positions and (col, (row + 1)) not in positions:
+                new_cells["{}, {}".format(col, (row + 1))].status = orig_status
+                new_positions.add((col, (row + 1)))
+            elif directions[0][1] == "leftup" and ((col - 1), (row - 1)) not in new_positions and ((col - 1), (row - 1)) not in positions:
+                new_cells["{}, {}".format((col - 1), (row - 1))].status = orig_status
+                new_positions.add(((col - 1), (row - 1)))
+            elif directions[0][1] == "leftdown" and ((col - 1), (row + 1)) not in new_positions and ((col - 1), (row + 1)) not in positions:
+                new_cells["{}, {}".format((col - 1), (row + 1))].status = orig_status
+                new_positions.add(((col - 1), (row + 1)))
+            elif directions[0][1] == "rightup" and ((col + 1), (row - 1)) not in new_positions and ((col + 1), (row - 1)) not in positions:
+                new_cells["{}, {}".format((col + 1), (row - 1))].status = orig_status
+                new_positions.add(((col + 1), (row - 1)))
+            elif directions[0][1] == "rightdown" and ((col + 1), (row - 1)) not in new_positions and ((col + 1), (row - 1)) not in positions:
+                new_cells["{}, {}".format((col + 1), (row + 1))].status = orig_status
+                new_positions.add(((col + 1), (row + 1)))
             else:
-                new_positions.add(position)
                 new_cells["{}, {}".format(col, row)].status = orig_status
+                new_positions.add(position)
 
     return (new_positions, new_cells)
 
 def grouping(positions, cells):
+
+    for cell in cells:
+        cells[cell].group = ""
+
+    holder = []
     new_groups = []
 
     for position in positions:
@@ -333,14 +414,15 @@ def grouping(positions, cells):
         group_potential = 0
 
         neighbors = get_neighbors(position)
-        errbody = neighbors + [position]
+        errbody = [position]
 
         for neighbor in neighbors:
             x, y = neighbor
             if neighbor in positions and cells["{}, {}".format(x, y)].status == cells["{}, {}".format(col, row)].status:
                 group_potential += 1
+                errbody.append(neighbor)
         
-        if group_potential == 4:
+        if group_potential >= 4:
             new_group = set()
             for pos in errbody:
                 new_group.add(pos)
@@ -349,21 +431,33 @@ def grouping(positions, cells):
                     c, d = neighbor1
                     if cells["{}, {}".format(c, d)].status == cells["{}, {}".format(col, row)].status:
                         new_group.add(neighbor1)
-            new_groups.append(new_group)
-        
-        for group1 in new_groups:
-            delete = False
-            amalg = set(group1)
-            for pos in group1:
-                for group2 in new_groups:
-                    if pos in group2:
-                        delete = True
-                        amalg = amalg.union(group2)
-                        new_groups.remove(group2)
-            if delete:
-                new_groups.append(amalg) 
+            holder.append(new_group)
 
-    return new_groups
+    while len(holder) > 0:
+        first, *rest = holder
+        first = set(first)
+
+        lf = -1
+        while len(first) > lf:
+            lf = len(first)
+
+            rest2 = []
+            for r in rest:
+                if len(first.intersection(set(r)))>0:
+                    first |= set(r)
+                else:
+                    rest2.append(r)     
+            rest = rest2
+
+        new_groups.append(first)
+        holder = rest
+
+    for i, group in enumerate(new_groups):
+        for pos in group:
+            x, y = pos
+            cells["{}, {}".format(x, y)].group = i
+
+    return new_groups, cells
 
 def shifting(positions, groups, cells):
     amalg = set()
@@ -387,18 +481,54 @@ def shifting(positions, groups, cells):
         a, b = orig_point
         orig_status = cells["{}, {}".format(a, b)].status
 
-        direction = random.choice(["left", "right", "up", "down", "leftup", "leftdown", "rightup", "rightdown"])
+        directions = ["left", "right", "up", "down", "leftup", "leftdown", "rightup", "rightdown", "stay"]
+
+        for pos in group:
+            x, y = pos
+            if x == 0:
+                if "left" in directions:
+                    directions.remove("left")
+                if "leftup" in directions:
+                    directions.remove("leftup")
+                if "leftdown" in directions:
+                    directions.remove("leftdown")
+
+            if x == GRID_WIDTH - 1:
+                if "right" in directions:
+                    directions.remove("right")
+                if "rightup" in directions:
+                    directions.remove("rightup")
+                if "rightdown" in directions:
+                    directions.remove("rightdown")
+
+            if y == 0:
+                if "up" in directions:
+                    directions.remove("up")
+                if "leftup" in directions:
+                    directions.remove("leftup")
+                if "rightup" in directions:
+                    directions.remove("rightup")
+
+            if y == GRID_HEIGHT - 1:
+                if "down" in directions:
+                    directions.remove("down")
+                if "rightdown" in directions:
+                    directions.remove("rightdown")
+                if "leftdown" in directions:
+                    directions.remove("leftdown")
+
+        direction = random.choice(directions)
 
         if direction == "left":
             for point in group:
                 x, y = point
-                if ((x - 1) % GRID_WIDTH, y) in new_positions: 
+                if ((x - 1) , y) in new_positions: 
                     can_move = False
             if can_move:
                 for point in group:
                     x, y = point
-                    new_positions.add(((x - 1) % GRID_WIDTH, y))
-                    new_cells["{}, {}".format((x - 1) % GRID_WIDTH, y)].status = orig_status
+                    new_positions.add(((x - 1) , y))
+                    new_cells["{}, {}".format((x - 1) , y)].status = orig_status
             else:
                 for point in group:
                     x, y = point
@@ -408,13 +538,13 @@ def shifting(positions, groups, cells):
         elif direction == "right":
             for point in group:
                 x, y = point
-                if ((x + 1) % GRID_WIDTH, y) in new_positions: 
+                if ((x + 1) , y) in new_positions: 
                     can_move = False
             if can_move:
                 for point in group:
                     x, y = point
-                    new_positions.add(((x + 1) % GRID_WIDTH, y))
-                    new_cells["{}, {}".format((x + 1) % GRID_WIDTH, y)].status = orig_status
+                    new_positions.add(((x + 1) , y))
+                    new_cells["{}, {}".format((x + 1) , y)].status = orig_status
             else:
                 for point in group:
                     x, y = point
@@ -424,13 +554,13 @@ def shifting(positions, groups, cells):
         elif direction == "up":
             for point in group:
                 x, y = point
-                if (x, (y - 1) % GRID_HEIGHT) in new_positions: 
+                if (x, (y - 1) ) in new_positions: 
                     can_move = False
             if can_move:
                 for point in group:
                     x, y = point
-                    new_positions.add((x, (y - 1) % GRID_HEIGHT))
-                    new_cells["{}, {}".format(x, (y - 1) % GRID_HEIGHT)].status = orig_status
+                    new_positions.add((x, (y - 1) ))
+                    new_cells["{}, {}".format(x, (y - 1) )].status = orig_status
             else:
                 for point in group:
                     x, y = point
@@ -440,13 +570,13 @@ def shifting(positions, groups, cells):
         elif direction == "down":
             for point in group:
                 x, y = point
-                if (x, (y + 1) % GRID_HEIGHT) in new_positions: 
+                if (x, (y + 1) ) in new_positions: 
                     can_move = False
             if can_move:
                 for point in group:
                     x, y = point
-                    new_positions.add((x, (y + 1) % GRID_HEIGHT))
-                    new_cells["{}, {}".format(x, (y + 1) % GRID_HEIGHT)].status = orig_status
+                    new_positions.add((x, (y + 1) ))
+                    new_cells["{}, {}".format(x, (y + 1) )].status = orig_status
             else:
                 for point in group:
                     x, y = point
@@ -456,13 +586,13 @@ def shifting(positions, groups, cells):
         elif direction == "leftup":
             for point in group:
                 x, y = point
-                if ((x - 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT) in new_positions: 
+                if ((x - 1) , (y - 1) ) in new_positions: 
                     can_move = False
             if can_move:
                 for point in group:
                     x, y = point
-                    new_positions.add(((x - 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT))
-                    new_cells["{}, {}".format((x - 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT)].status = orig_status
+                    new_positions.add(((x - 1) , (y - 1) ))
+                    new_cells["{}, {}".format((x - 1) , (y - 1) )].status = orig_status
             else:
                 for point in group:
                     x, y = point
@@ -472,13 +602,13 @@ def shifting(positions, groups, cells):
         elif direction == "leftdown":
             for point in group:
                 x, y = point
-                if ((x - 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT) in new_positions: 
+                if ((x - 1) , (y + 1) ) in new_positions: 
                     can_move = False
             if can_move:
                 for point in group:
                     x, y = point
-                    new_positions.add(((x - 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT))
-                    new_cells["{}, {}".format((x - 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT)].status = orig_status
+                    new_positions.add(((x - 1) , (y + 1) ))
+                    new_cells["{}, {}".format((x - 1) , (y + 1) )].status = orig_status
             else:
                 for point in group:
                     x, y = point
@@ -488,13 +618,13 @@ def shifting(positions, groups, cells):
         elif direction == "rightup":
             for point in group:
                 x, y = point
-                if ((x + 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT) in new_positions: 
+                if ((x + 1) , (y - 1) ) in new_positions: 
                     can_move = False
             if can_move:
                 for point in group:
                     x, y = point
-                    new_positions.add(((x + 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT))
-                    new_cells["{}, {}".format((x + 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT)].status = orig_status
+                    new_positions.add(((x + 1) , (y - 1) ))
+                    new_cells["{}, {}".format((x + 1) , (y - 1) )].status = orig_status
             else:
                 for point in group:
                     x, y = point
@@ -504,13 +634,13 @@ def shifting(positions, groups, cells):
         elif direction == "rightdown":
             for point in group:
                 x, y = point
-                if ((x + 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT) in new_positions: 
+                if ((x + 1) , (y + 1) ) in new_positions: 
                     can_move = False
             if can_move:
                 for point in group:
                     x, y = point
-                    new_positions.add(((x + 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT))
-                    new_cells["{}, {}".format((x + 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT)].status = orig_status
+                    new_positions.add(((x + 1) , (y + 1) ))
+                    new_cells["{}, {}".format((x + 1) , (y + 1) )].status = orig_status
             else:
                 for point in group:
                     x, y = point
@@ -530,64 +660,105 @@ def shifting(positions, groups, cells):
             orig_status = cells["{}, {}".format(x, y)].status
 
             directions = ["left", "right", "up", "down", "leftup", "leftdown", "rightup", "rightdown", "stay"]
+
+            if x == 0:
+                for dir in directions:
+                    if dir == "left":
+                        directions.remove("left")
+                    if dir == "leftdown":
+                        directions.remove("leftdown")
+                    if dir == "left":
+                        directions.remove("leftup")
+
+            if x == GRID_WIDTH - 1:
+                for dir in directions:
+                    if dir == "right":
+                        directions.remove("right")
+                    if dir == "rightdown":
+                        directions.remove("rightdown")
+                    if dir == "left":
+                        directions.remove("rightup")
+            if y == 0:
+                for dir in directions:
+                    if dir == "up":
+                        directions.remove("up")
+                    if dir == "leftup":
+                        directions.remove("leftup")
+                    if dir == "rightup":
+                        directions.remove("rightup")
+
+            if y == GRID_HEIGHT - 1:
+                for dir in directions:
+                    if dir == "down":
+                        directions.remove("down")
+                    if dir == "leftdown":
+                        directions.remove("leftdown")
+                    if dir == "rightdown":
+                        directions.remove("rightdown")
+
             random.shuffle(directions)
 
             unplaced = True
             i = 0
 
             while unplaced:
-                if directions[i] == "left":
-                    if ((x - 1) % GRID_WIDTH, y) not in new_positions:
-                        unplaced = False
-                        new_positions.add(((x - 1) % GRID_WIDTH, y))
-                        new_cells["{}, {}".format((x - 1) % GRID_WIDTH, y)].status = orig_status
+                try:
+                    if directions[i] == "left":
+                        if ((x - 1) , y) not in new_positions:
+                            unplaced = False
+                            new_positions.add(((x - 1) , y))
+                            new_cells["{}, {}".format((x - 1) , y)].status = orig_status
 
-                elif directions[i] == "right":
-                    if ((x + 1) % GRID_WIDTH, y) not in new_positions:
-                        unplaced = False
-                        new_positions.add(((x + 1) % GRID_WIDTH, y))
-                        new_cells["{}, {}".format((x + 1) % GRID_WIDTH, y)].status = orig_status
+                    elif directions[i] == "right":
+                        if ((x + 1) , y) not in new_positions:
+                            unplaced = False
+                            new_positions.add(((x + 1) , y))
+                            new_cells["{}, {}".format((x + 1) , y)].status = orig_status
 
-                elif directions[i] == "up":
-                    if (x, (y - 1) % GRID_HEIGHT) not in new_positions:
-                        unplaced = False
-                        new_positions.add((x, (y - 1) % GRID_HEIGHT))
-                        new_cells["{}, {}".format(x, (y - 1) % GRID_HEIGHT)].status = orig_status
-                
-                elif directions[i] == "down":
-                    if (x, (y + 1) % GRID_HEIGHT) not in new_positions:
-                        unplaced = False
-                        new_positions.add((x, (y + 1) % GRID_HEIGHT))
-                        new_cells["{}, {}".format(x, (y + 1) % GRID_HEIGHT)].status = orig_status
+                    elif directions[i] == "up":
+                        if (x, (y - 1) ) not in new_positions:
+                            unplaced = False
+                            new_positions.add((x, (y - 1) ))
+                            new_cells["{}, {}".format(x, (y - 1) )].status = orig_status
+                    
+                    elif directions[i] == "down":
+                        if (x, (y + 1) ) not in new_positions:
+                            unplaced = False
+                            new_positions.add((x, (y + 1) ))
+                            new_cells["{}, {}".format(x, (y + 1) )].status = orig_status
 
-                elif directions[i] == "leftup":
-                    if ((x - 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT) not in new_positions:
-                        unplaced = False
-                        new_positions.add(((x - 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT))
-                        new_cells["{}, {}".format((x - 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT)].status = orig_status
+                    elif directions[i] == "leftup":
+                        if ((x - 1) , (y - 1) ) not in new_positions:
+                            unplaced = False
+                            new_positions.add(((x - 1) , (y - 1) ))
+                            new_cells["{}, {}".format((x - 1) , (y - 1) )].status = orig_status
 
-                elif directions[i] == "leftdown":
-                    if ((x - 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT) not in new_positions:
-                        unplaced = False
-                        new_positions.add(((x - 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT))
-                        new_cells["{}, {}".format((x - 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT)].status = orig_status
-        
-                elif directions[i] == "rightup":
-                    if ((x + 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT) not in new_positions:
-                        unplaced = False
-                        new_positions.add(((x + 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT))
-                        new_cells["{}, {}".format((x + 1) % GRID_WIDTH, (y - 1) % GRID_HEIGHT)].status = orig_status
+                    elif directions[i] == "leftdown":
+                        if ((x - 1) , (y + 1) ) not in new_positions:
+                            unplaced = False
+                            new_positions.add(((x - 1) , (y + 1) ))
+                            new_cells["{}, {}".format((x - 1) , (y + 1) )].status = orig_status
+            
+                    elif directions[i] == "rightup":
+                        if ((x + 1) , (y - 1) ) not in new_positions:
+                            unplaced = False
+                            new_positions.add(((x + 1) , (y - 1) ))
+                            new_cells["{}, {}".format((x + 1) , (y - 1) )].status = orig_status
 
-                elif directions[i] == "rightdown":
-                    if ((x + 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT) not in new_positions:
-                        unplaced = False
-                        new_positions.add(((x + 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT))
-                        new_cells["{}, {}".format((x + 1) % GRID_WIDTH, (y + 1) % GRID_HEIGHT)].status = orig_status
-                else:
-                    if (x, y) not in new_positions:
-                        unplaced = False
-                        new_positions.add((x, y))
-                        new_cells["{}, {}".format(x, y)].status = orig_status
+                    elif directions[i] == "rightdown":
+                        if ((x + 1) , (y + 1) ) not in new_positions:
+                            unplaced = False
+                            new_positions.add(((x + 1) , (y + 1) ))
+                            new_cells["{}, {}".format((x + 1) , (y + 1) )].status = orig_status
+                    else:
+                        if (x, y) not in new_positions:
+                            unplaced = False
+                            new_positions.add((x, y))
+                            new_cells["{}, {}".format(x, y)].status = orig_status
+                except:
+                    new_positions.add((x, y))
+                    new_cells["{}, {}".format(x, y)].status = orig_status
+                    unplaced = False
 
                 i += 1
 
@@ -597,10 +768,33 @@ def shifting(positions, groups, cells):
 def get_neighbors(pos):
     x,y = pos
     neighbors = []
-    for position in [(-1, 0), (1, 0), (0, 1), (0, -1)]:
+    potential_neighbors = [(-1, 0), (1, 0), (0, 1), (0, -1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+    if x == 0:
+        potential_neighbors.remove((-1, 0))
+        potential_neighbors.remove((-1, 1))
+        potential_neighbors.remove((-1, -1))
+    if x == GRID_WIDTH - 1:
+        potential_neighbors.remove((1, 0))
+        potential_neighbors.remove((1, 1))
+        potential_neighbors.remove((1, -1))
+    if y == 0:
+        potential_neighbors.remove((0, -1))
+        if (1, -1) in potential_neighbors:
+            potential_neighbors.remove((1, -1))
+        if (-1, -1) in potential_neighbors:
+            potential_neighbors.remove((-1, -1))
+    if y == GRID_HEIGHT - 1:
+        potential_neighbors.remove((0, 1))
+        if (-1, 1) in potential_neighbors:
+            potential_neighbors.remove((-1, 1))
+        if (1, 1) in potential_neighbors:
+            potential_neighbors.remove((1, 1))
+
+    for position in potential_neighbors:
         dx, dy = position
         #adds neighbors to list
-        neighbors.append(((x + dx) % GRID_WIDTH, (y + dy) % GRID_HEIGHT))
+        neighbors.append(((x + dx) , (y + dy) ))
 
     return neighbors
 
@@ -619,6 +813,8 @@ def make_mp4():
 
 def plot_it(x_coord, y_coord):
     plt.plot(x_coord, y_coord)
+    plt.xlabel("Timesteps (matches with video increments in base 60)")
+    plt.ylabel("Overall Grid Enerfy")
     plot_output = '//Users//jstinson//Desktop//2D Cellular Automata/Polarization//Plots//CA ' + str(datetime.now()) + '.png'
     plt.savefig(plot_output)
     plt.show()
@@ -642,6 +838,7 @@ def main():
     y_coord = []
 
     #initializes a grouping mechanism as a list of sets
+    color_groups = False
     groups = []
 
     #creates the cell objects for the grid
@@ -677,7 +874,21 @@ def main():
             
             #determines the rule_set
             positions, cells = adjust_grid(positions, cells)
-            groups = grouping(positions, cells)
+            groups, cells = grouping(positions, cells)
+
+            blackies = 0 
+            grey = 0
+            pink = 0
+
+            for cell in cells:
+                if cells[cell].status == 1:
+                    blackies += 1
+                elif cells[cell].status == 2:
+                    grey += 1
+                elif cells[cell].status == 100:
+                    pink += 1
+
+            print("{}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
 
         if shift_count >= shift_freq:
             shift_count = 0
@@ -692,6 +903,20 @@ def main():
             #determines the rule_set
             positions, cells = shifting(positions, groups, cells)
 
+            blackies = 0 
+            grey = 0
+            pink = 0
+
+            for cell in cells:
+                if cells[cell].status == 1:
+                    blackies += 1
+                elif cells[cell].status == 2:
+                    grey += 1
+                elif cells[cell].status == 100:
+                    pink += 1
+
+            print("shifting at {}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
+
         #initializes a way to see if the game is progressing
         if playing:
             status = "Playing"
@@ -699,7 +924,7 @@ def main():
             status = "Paused"
 
         #shows player what the rules are and if the game is proceeding
-        pygame.display.set_caption("{}: Add color {}".format(status, add_color))
+        pygame.display.set_caption("{}: Add color {}, Color Groups = {}".format(status, add_color, color_groups))
 
         #checks for clicks
         for event in pygame.event.get():
@@ -761,10 +986,15 @@ def main():
                 #generates a random set of positions
                 if event.key == pygame.K_g:
                     (positions, cells) = gen(random.randrange(3, 5) * GRID_WIDTH)
+                    print("new generation")
+
+                #toggles grouping
+                if event.key == pygame.K_k:
+                    color_groups = not color_groups
 
         #displays everything
         screen.fill(LBLUE)
-        draw_grid(positions, cells)
+        draw_grid(positions, cells, color_groups)
         pygame.display.update()
 
     #creates movie when the game is exited
