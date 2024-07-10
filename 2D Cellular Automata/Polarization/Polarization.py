@@ -77,43 +77,66 @@ def gen(num, grids):
     return (positions, cells)
 
 #Visually adds tiles to the grid
-def draw_grid(positions, cells, color_groups, split_cells):
+def draw_grid(positions, cells, color_groups, color_grids, split_cells, grids):
+
+
+    if color_grids:
+        colors = iter([(255, 192, 203),
+                  BLACK, 
+                  GREY, 
+                  (18, 123, 203), 
+                  (150, 100, 38),
+                  (200, 0, 100), 
+                  (0, 0, 240), 
+                  (30, 0, 0), 
+                  (189, 18, 244), 
+                  (0, 194, 0), 
+                  (111, 111, 254)])
+        
+        for grid in grids:
+            color = next(colors)
+            for position in grid.positions:
+                col, row = position
+                top_left = (col * TILE_SIZE, row * TILE_SIZE)
+                pygame.draw.rect(screen, color, (*top_left, TILE_SIZE, TILE_SIZE))
+    
     for position in positions:
         col, row = position
         top_left = (col * TILE_SIZE, row * TILE_SIZE)
 
         #specifies the color of a given tile
-        if not color_groups:
-            if cells["{}, {}".format(col, row)].status == 1:
-                pygame.draw.rect(screen, BLACK, (*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].status == 2:
-                pygame.draw.rect(screen, GREY, (*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].status == 100:
-                pygame.draw.rect(screen, (255, 192, 203),(*top_left, TILE_SIZE, TILE_SIZE))
-        elif color_groups:
-            if cells["{}, {}".format(col, row)].group == 0:
-                pygame.draw.rect(screen, BLACK, (*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 1:
-                pygame.draw.rect(screen, GREY, (*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 2:
-                pygame.draw.rect(screen, (255, 192, 203),(*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 3:
-                pygame.draw.rect(screen, (18, 123, 203),(*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 4:
-                pygame.draw.rect(screen, (150, 100, 38),(*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 5:
-                pygame.draw.rect(screen, (200, 0, 100),(*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 6:
-                pygame.draw.rect(screen, (0, 0, 240),(*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 7:
-                pygame.draw.rect(screen, (30, 0, 0),(*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 8:
-                pygame.draw.rect(screen, (189, 18, 244),(*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 8:
-                pygame.draw.rect(screen, (0, 194, 0),(*top_left, TILE_SIZE, TILE_SIZE))
-            elif cells["{}, {}".format(col, row)].group == 8:
-                pygame.draw.rect(screen, (111, 111, 254),(*top_left, TILE_SIZE, TILE_SIZE))
-    
+        if not color_grids:
+            if color_groups:
+                if cells["{}, {}".format(col, row)].group == 0:
+                    pygame.draw.rect(screen, BLACK, (*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 1:
+                    pygame.draw.rect(screen, GREY, (*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 2:
+                    pygame.draw.rect(screen, (255, 192, 203),(*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 3:
+                    pygame.draw.rect(screen, (18, 123, 203),(*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 4:
+                    pygame.draw.rect(screen, (150, 100, 38),(*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 5:
+                    pygame.draw.rect(screen, (200, 0, 100),(*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 6:
+                    pygame.draw.rect(screen, (0, 0, 240),(*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 7:
+                    pygame.draw.rect(screen, (30, 0, 0),(*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 8:
+                    pygame.draw.rect(screen, (189, 18, 244),(*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 9:
+                    pygame.draw.rect(screen, (0, 194, 0),(*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].group == 10:
+                    pygame.draw.rect(screen, (111, 111, 254),(*top_left, TILE_SIZE, TILE_SIZE))
+            else:
+                if cells["{}, {}".format(col, row)].status == 1:
+                    pygame.draw.rect(screen, BLACK, (*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].status == 2:
+                    pygame.draw.rect(screen, GREY, (*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].status == 100:
+                    pygame.draw.rect(screen, (255, 192, 203),(*top_left, TILE_SIZE, TILE_SIZE))
+        
     #separates menu from cells
     pygame.draw.line(screen, GREY, ((GRID_HEIGHT) * TILE_SIZE, 0), ((GRID_HEIGHT) * TILE_SIZE, HEIGHT))
 
@@ -685,13 +708,20 @@ def main():
     shift_count = 0
     shift_freq = 140
 
+    division_counter = 0
+    division_freq = 300
+
     num = 0
     time = 0
     x_coord = []
     y_coord = []
 
-    #initializes a grouping mechanism as a list of sets
+    #Some flags/toggles
+    sanity_checks = False
     color_groups = False
+    color_grids = False
+
+    #initializes a grouping mechanism as a list of sets
     groups = []
 
     #creates a list of grids and the initial grid
@@ -723,6 +753,7 @@ def main():
         if playing:
             count += 1
             shift_count += 1
+            division_counter += 1
 
         #updates the game according to "speed" set priorly
         if count >= update_freq:
@@ -739,19 +770,20 @@ def main():
             positions, cells = adjust_grid(positions, cells, grids)
             groups, cells = grouping(positions, cells)
 
-            blackies = 0 
-            grey = 0
-            pink = 0
+            if sanity_checks:
+                blackies = 0 
+                grey = 0
+                pink = 0
 
-            for cell in cells:
-                if cells[cell].status == 1:
-                    blackies += 1
-                elif cells[cell].status == 2:
-                    grey += 1
-                elif cells[cell].status == 100:
-                    pink += 1
+                for cell in cells:
+                    if cells[cell].status == 1:
+                        blackies += 1
+                    elif cells[cell].status == 2:
+                        grey += 1
+                    elif cells[cell].status == 100:
+                        pink += 1
 
-            print("{}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
+                print("{}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
 
         if shift_count >= shift_freq:
             shift_count = 0
@@ -765,20 +797,45 @@ def main():
             
             #determines the rule_set
             positions, cells = shifting(positions, groups, cells, grids)
+            if sanity_checks:
+                blackies = 0 
+                grey = 0
+                pink = 0
 
-            blackies = 0 
-            grey = 0
-            pink = 0
+                for cell in cells:
+                    if cells[cell].status == 1:
+                        blackies += 1
+                    elif cells[cell].status == 2:
+                        grey += 1
+                    elif cells[cell].status == 100:
+                        pink += 1
 
-            for cell in cells:
-                if cells[cell].status == 1:
-                    blackies += 1
-                elif cells[cell].status == 2:
-                    grey += 1
-                elif cells[cell].status == 100:
-                    pink += 1
+                print("shifting at {}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
 
-            print("shifting at {}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
+        if division_counter >= division_freq:
+            division_counter = 0
+
+            random.shuffle(grids)
+            splitter = grids[0]
+            direction = random.choice(["vertical", "horizontal"])
+
+            if direction == "vertical":
+                division_line = (splitter.Max_Width + splitter.Min_Width) // 2
+                grids.append(Grid(division_line, splitter.Min_Width, splitter.Max_Length, splitter.Min_Length))
+                grids.append(Grid(splitter.Max_Width, division_line + 1, splitter.Max_Length, splitter.Min_Length))
+
+                split_cells.append((division_line + 1, division_line + 1, splitter.Min_Length, splitter.Max_Length + 1))
+
+                grids.remove(splitter)
+
+            elif direction == "horizontal":
+                division_line = (splitter.Max_Length + splitter.Min_Length) // 2
+                grids.append(Grid(splitter.Max_Width, splitter.Min_Width, splitter.Max_Length, division_line + 1))
+                grids.append(Grid(splitter.Max_Width, splitter.Min_Width, division_line, splitter.Min_Length))
+ 
+                split_cells.append((splitter.Min_Width, splitter.Max_Width + 1, division_line + 1, division_line + 1))
+
+                grids.remove(splitter)   
 
         #initializes a way to see if the game is progressing
         if playing:
@@ -787,7 +844,7 @@ def main():
             status = "Paused"
 
         #shows player what the rules are and if the game is proceeding
-        pygame.display.set_caption("{}: Add color {}, Color Groups = {}".format(status, add_color, color_groups))
+        pygame.display.set_caption("{}: Add color {}, Number of cells = {}, Color Groups = {}".format(status, add_color, len(grids), color_groups))
 
         #checks for clicks
         for event in pygame.event.get():
@@ -855,9 +912,18 @@ def main():
                 if event.key == pygame.K_k:
                     color_groups = not color_groups
 
+                #toggles coloring grids
+                if event.key == pygame.K_l:
+                    color_grids = not color_grids
+
+                #toggles all sanity checks
+                if event.key == pygame.K_q:
+                    sanity_checks = not sanity_checks
+
+
         #displays everything
         screen.fill(LBLUE)
-        draw_grid(positions, cells, color_groups, split_cells)
+        draw_grid(positions, cells, color_groups, color_grids, split_cells, grids)
         pygame.display.update()
 
     #creates movie when the game is exited
