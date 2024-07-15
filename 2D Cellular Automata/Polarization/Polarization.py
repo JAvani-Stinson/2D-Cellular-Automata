@@ -2,10 +2,10 @@ import pygame
 import random
 import os
 from datetime import datetime
-import glob
 import matplotlib.pyplot as plt
 from Classes_Reworked import Grid, Cell
 from Output import make_png, make_mp4, plot_it
+from Splitting_Process import move_pp_A, move_pp_B
 
 #initiate pygame
 pygame.init()
@@ -141,8 +141,10 @@ def draw_grid(positions, cells, sanity_checks, color_groups, color_grids, split_
 
                 if cells["{}, {}".format(col, row)].nucleus:
                     pygame.draw.rect(screen, (255, 192, 203), (*top_left, TILE_SIZE, TILE_SIZE))
-                elif cells["{}, {}".format(col, row)].polarity_protein:
+                elif cells["{}, {}".format(col, row)].polarity_protein_A:
                     pygame.draw.rect(screen, (79, 121, 66), (*top_left, TILE_SIZE, TILE_SIZE))
+                elif cells["{}, {}".format(col, row)].polarity_protein_B:
+                    pygame.draw.rect(screen, (139, 0, 0), (*top_left, TILE_SIZE, TILE_SIZE))
        
     if sanity_checks:
         for pos in positions:
@@ -228,11 +230,14 @@ def adjust_grid(positions, cells, grids, distance_scaler):
         if cells["{}, {}".format(col, row)].nucleus:
             new_positions.add(position)
             new_cells["{}, {}".format(col, row)].nucleus = True
-        if cells["{}, {}".format(col, row)].polarity_protein:
+        if cells["{}, {}".format(col, row)].polarity_protein_A:
             new_positions.add(position)
-            new_cells["{}, {}".format(col, row)].polarity_protein = True
+            new_cells["{}, {}".format(col, row)].polarity_protein_A = True
+        if cells["{}, {}".format(col, row)].polarity_protein_B:
+            new_positions.add(position)
+            new_cells["{}, {}".format(col, row)].polarity_protein_B = True
 
-        if not ((cells["{}, {}".format(col, row)].nucleus or cells["{}, {}".format(col, row)].polarity_protein) and cells["{}, {}".format(col, row)].status == 0):
+        if not ((cells["{}, {}".format(col, row)].nucleus or cells["{}, {}".format(col, row)].polarity_protein_A or cells["{}, {}".format(col, row)].polarity_protein_B) and cells["{}, {}".format(col, row)].status == 0):
         
             #initializes some high energies 
             directions = [(float('inf'), "left"), (float('inf'), "right"), (float('inf'), "up"), (float('inf'), "down"), (float('inf'), "leftup"), (float('inf'), "leftdown"), (float('inf'), "rightup"), (float('inf'), "rightdown"), (cells["{}, {}".format(col, row)].get_energy(positions, cells, distance_scaler), "stay")]
@@ -362,9 +367,13 @@ def shifting(positions, groups, cells, grids):
             new_positions.add((cells[cell].i, cells[cell].j))
             new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].nucleus = True
             amalg.add((cells[cell].i, cells[cell].j))
-        if cells[cell].polarity_protein:
+        if cells[cell].polarity_protein_A:
             new_positions.add((cells[cell].i, cells[cell].j))
-            new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].polarity_protein = True
+            new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].polarity_protein_A = True
+            amalg.add((cells[cell].i, cells[cell].j))
+        if cells[cell].polarity_protein_B:
+            new_positions.add((cells[cell].i, cells[cell].j))
+            new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].polarity_protein_B = True
             amalg.add((cells[cell].i, cells[cell].j))
 
     for group in groups:
@@ -744,6 +753,8 @@ def main():
 
     #parameters
     distance_scaler = 30
+    pp_attraction_factor = -30
+    pp_repulsion_factor = 50
 
     #initializes a path for the all information to go to
     path_time = str(datetime.now())
@@ -753,6 +764,8 @@ def main():
     fname = path + 'parameters'
     file = open(fname, "w")
     file.write("distance scaler = {}".format(distance_scaler))
+    file.write("polarity protein attraction factor = {}".format(pp_attraction_factor))
+    file.write("polarity protein repulsion factor = {}".format(pp_repulsion_factor))
     file.close
 
     '''
@@ -771,7 +784,7 @@ def main():
         if playing:
             count += 1
             shift_count += 1
-            division_counter += 1
+            #division_counter += 1
 
         #updates the game according to "speed" set priorly
         if count >= update_freq:
@@ -788,11 +801,15 @@ def main():
                 #determines the rule_set
                 positions, cells = adjust_grid(positions, cells, grids, distance_scaler)
                 groups, cells = grouping(positions, cells)
+                positions, cells = move_pp_A(positions, cells, distance_scaler, pp_attraction_factor, pp_repulsion_factor)
+                positions, cells = move_pp_B(positions, cells, distance_scaler, pp_attraction_factor, pp_repulsion_factor)
 
             if sanity_checks:
                 blackies = 0 
                 grey = 0
                 pink = 0
+                A = 0
+                B = 0
 
                 for cell in cells:
                     if cells[cell].status == 1:
@@ -801,8 +818,12 @@ def main():
                         grey += 1
                     if cells[cell].nucleus:
                         pink += 1
+                    if cells[cell].polarity_protein_A:
+                        A += 1
+                    if cells[cell].polarity_protein_B:
+                        B += 1
 
-                print("{}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
+                print("{}: blacks - {}, grey - {}, pink - {}, A - {}, B - {}".format(time, blackies, grey, pink, A, B))
 
         if shift_count >= shift_freq:
             shift_count = 0
@@ -838,7 +859,6 @@ def main():
                     grid_count[cells["{}, {}".format(col, row)].grid] += 1
 
                 print("shifting at {}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
-                print("grid dictionary at shift: {}".format(grid_count))
 
         if division_counter >= division_freq:
             division_counter = 0
@@ -918,7 +938,8 @@ def main():
                             if cells["{}, {}".format(col, row)].status == 0:
                                 positions.remove(pos)
                         elif add_color == "pp":  
-                            cells["{}, {}".format(col, row)].polarity_protein = not cells["{}, {}".format(col, row)].polarity_protein
+                            cells["{}, {}".format(col, row)].polarity_protein_A = False
+                            cells["{}, {}".format(col, row)].polarity_protein_B = False
                             if cells["{}, {}".format(col, row)].status == 0:
                                 positions.remove(pos)
                         else:
@@ -936,7 +957,11 @@ def main():
                         elif add_color == "grey":
                             cells["{}, {}".format(col, row)].status = 2 
                         elif add_color == "pp":
-                            cells["{}, {}".format(col, row)].polarity_protein = True
+                            target = random.choice(["A", "B"])
+                            if target == "A":
+                                cells["{}, {}".format(col, row)].polarity_protein_A = True
+                            else:
+                                cells["{}, {}".format(col, row)].polarity_protein_B = True
                         elif add_color == "nuc":
                             positions.add((col + 1, row))
                             positions.add((col, row + 1))
