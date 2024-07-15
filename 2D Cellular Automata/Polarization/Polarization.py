@@ -316,7 +316,7 @@ def grouping(positions, cells):
 
         for neighbor in neighbors:
             x, y = neighbor
-            if neighbor in positions and cells["{}, {}".format(x, y)].status == cells["{}, {}".format(col, row)].status and (x, y) in cells["{}, {}".format(col, row)].grid.positions:
+            if neighbor in positions and cells["{}, {}".format(x, y)].status != 0 and cells["{}, {}".format(x, y)].status == cells["{}, {}".format(col, row)].status and (x, y) in cells["{}, {}".format(col, row)].grid.positions:
                 group_potential += 1
                 errbody.append(neighbor)
         
