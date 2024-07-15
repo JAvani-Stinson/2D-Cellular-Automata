@@ -19,7 +19,8 @@ class Cell:
         self.j = j
         self.status = 0
         self.nucleus = False
-        self.polarity_protein = False
+        self.polarity_protein_A = False
+        self.polarity_protein_B = False
         self.color = "white"
         self.group = ""
         self.grid = ""
