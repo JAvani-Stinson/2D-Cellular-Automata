@@ -1,5 +1,9 @@
 import math
+import random
 from Classes_and_Grids import Grid
+
+p_to_c_match_rate = -30
+p_to_c_differ_rate = 10
 
 def move_pp_A(positions, cells, distance_scaler, pp_attraction_factor, pp_repulsion_factor):
     proteins = set()
@@ -265,35 +269,36 @@ def pp_energy_A(pos, cells, on_membrane, grid, possible_moves, distance_scaler, 
             direction = "stay"
             
         for protein in on_membrane:
-            a, b = protein
+            if protein in cells["{}, {}".format(x, y)].grid.positions:
+                a, b = protein
 
-            if (c == grid.Max_Width and a == grid.Min_Width) or (c == grid.Min_Width and a == grid.Max_Width):
-                potential = [abs(d - grid.Max_Length) + abs(b - grid.Max_Length), abs(d - grid.Min_Length) + abs(b - grid.Min_Length)]
-                potential.sort()
-                y_distance = potential[0]
-            else:
-                y_distance = abs(d - b)
-            if (d == grid.Max_Length and b == grid.Min_Length) or (d == grid.Min_Width and b == grid.Max_Length):
-                potential = [abs(c - grid.Max_Width) + abs(a - grid.Max_Width), abs(c - grid.Min_Width) + abs(a - grid.Min_Width)]
-                potential.sort()
-                x_distance = potential[0]
-            else:
-                x_distance = abs(c - a)
+                if (c == grid.Max_Width and a == grid.Min_Width) or (c == grid.Min_Width and a == grid.Max_Width):
+                    potential = [abs(d - grid.Max_Length) + abs(b - grid.Max_Length), abs(d - grid.Min_Length) + abs(b - grid.Min_Length)]
+                    potential.sort()
+                    y_distance = potential[0]
+                else:
+                    y_distance = abs(d - b)
+                if (d == grid.Max_Length and b == grid.Min_Length) or (d == grid.Min_Width and b == grid.Max_Length):
+                    potential = [abs(c - grid.Max_Width) + abs(a - grid.Max_Width), abs(c - grid.Min_Width) + abs(a - grid.Min_Width)]
+                    potential.sort()
+                    x_distance = potential[0]
+                else:
+                    x_distance = abs(c - a)
 
-            distance = x_distance + y_distance
-            if distance != 0:
-                strength = 1/math.sqrt(distance) * distance_scaler
-                if cells["{}, {}".format(a, b)].polarity_protein_A:
-                    energy += strength * pp_attraction_factor
-                if cells["{}, {}".format(a, b)].polarity_protein_B:
-                    energy += strength * pp_repulsion_factor
-            else:
-                distance = 1
-                strength = 1/math.sqrt(distance) * distance_scaler
-                if cells["{}, {}".format(a, b)].polarity_protein_A:
-                    energy += strength * pp_attraction_factor
-                if cells["{}, {}".format(a, b)].polarity_protein_B:
-                    energy += strength * pp_repulsion_factor
+                distance = x_distance + y_distance
+                if distance != 0:
+                    strength = 1/math.sqrt(distance) * distance_scaler
+                    if cells["{}, {}".format(a, b)].polarity_protein_A:
+                        energy += strength * pp_attraction_factor
+                    if cells["{}, {}".format(a, b)].polarity_protein_B:
+                        energy += strength * pp_repulsion_factor
+                else:
+                    distance = 1
+                    strength = 1/math.sqrt(distance) * distance_scaler
+                    if cells["{}, {}".format(a, b)].polarity_protein_A:
+                        energy += strength * pp_attraction_factor
+                    if cells["{}, {}".format(a, b)].polarity_protein_B:
+                        energy += strength * pp_repulsion_factor
 
         possible_moves[i] = (energy, direction)
 
@@ -449,9 +454,34 @@ def get_centrosome_directions(cells, grid):
     directions = sorted([(left, "left"), (right, "right"), (up, "up"), (down, "down")])
     directions.reverse()
 
-    direction_pos = directions[0][1]
+    if directions[0][0] == directions[1][0]:
+        direction_pos = random.choice([directions[0][1], directions[1][1]])
+    else:
+        direction_pos = directions[0][1]
     
     grid.centrosome_pos_direction = direction_pos
+
+    if grid.centrosome_pos_direction == "right":
+        a, b = grid.centrosome_pos
+        cells["{}, {}".format(a, b)].centrosome_pos = False
+        cells["{}, {}".format(a + 1, b)].centrosome_pos = True
+        grid.centrosome_pos = (a + 1, b)
+
+        c, d = grid.centrosome_neg
+        cells["{}, {}".format(c, d)].centrosome_neg = False
+        cells["{}, {}".format(c - 1, d)].centrosome_neg = True
+        grid.centrosome_neg = (c - 1, d)
+
+    if grid.centrosome_pos_direction == "down":
+        a, b = grid.centrosome_pos
+        cells["{}, {}".format(a, b)].centrosome_pos = False
+        cells["{}, {}".format(a, b + 1)].centrosome_pos = True
+        grid.centrosome_pos = (a, b + 1)
+
+        c, d = grid.centrosome_neg
+        cells["{}, {}".format(c, d)].centrosome_neg = False
+        cells["{}, {}".format(c, d - 1)].centrosome_neg = True
+        grid.centrosome_neg = (c, d - 1)
 
     if grid.centrosome_pos_direction == "left":
         edge = float("inf")
@@ -506,14 +536,14 @@ def get_centrosome_energy_pos(grid, cells):
 
         distance = math.sqrt((x - i)**2 + (y - j)**2)
         if distance != 0:
-            strength = 1/distance * 15
+            strength = 1/distance * 10
         else:
-            strength = 15
+            strength = 10
 
         if other.polarity_protein_A:
-            rate = -30
+            rate = p_to_c_match_rate
         if other.polarity_protein_B:
-            rate = 10
+            rate = p_to_c_differ_rate
 
         energy += strength * rate
     
@@ -529,14 +559,14 @@ def get_centrosome_energy_neg(grid, cells):
 
         distance = math.sqrt((x - i)**2 + (y - j)**2)
         if distance != 0:
-            strength = 1/distance * 15
+            strength = 1/distance * 10
         else:
-            strength = 15
+            strength = 10
 
         if other.polarity_protein_B:
-            rate = -30
+            rate = p_to_c_match_rate
         if other.polarity_protein_A:
-            rate = 10
+            rate = p_to_c_differ_rate
 
         energy += strength * rate
     
@@ -582,6 +612,8 @@ def move_centrosomes(positions, cells, grids, centrosome_threshold):
                         positions.remove((a, b))
                     if b + 1 >= .80 * abs(grid.Max_Length - grid.Min_Length) // 1 + grid.Min_Length or b >= .80 * abs(grid.Max_Length - grid.Min_Length) // 1 + grid.Min_Length:
                         grid.separating_nuclei_pos = True
+                else:
+                    grid.separating_nuclei_pos = True
             else:
                 grid.separating_nuclei_pos = True
 
@@ -618,6 +650,8 @@ def move_centrosomes(positions, cells, grids, centrosome_threshold):
                         positions.remove((c, d))
                     if d - 1 <= .20 * abs(grid.Max_Length - grid.Min_Length) // 1 + grid.Min_Length or d <= .20 * abs(grid.Max_Length - grid.Min_Length) // 1 + grid.Min_Length:
                         grid.separating_nuclei_neg = True
+                else:
+                    grid.separating_nuclei_neg = True
             else:
                 grid.separating_nuclei_neg = True
     
@@ -727,24 +761,274 @@ def move_nuclei(positions, cells, grids):
     
     return positions, cells
 
-def divide_cells(grids, split_cells, centrosome_threshold, centrosome_threshold_multiplier):
+def divide_cells(positions, cells, grids, split_cells, centrosome_threshold, centrosome_threshold_multiplier, cell_name_counter):
     for grid in grids:
         if grid.pos_ready_divide and grid.neg_ready_divide:
             if grid.centrosome_pos_direction == "left" or grid.centrosome_pos_direction == "right":
                 division_line = abs(grid.centrosome_pos[0] + grid.centrosome_neg[0]) // 2
-                grids.append(Grid(division_line, grid.Min_Width, grid.Max_Length, grid.Min_Length))
-                grids.append(Grid(grid.Max_Width, division_line + 1, grid.Max_Length, grid.Min_Length))
+                grid_A = Grid(division_line, grid.Min_Width, grid.Max_Length, grid.Min_Length, cell_name_counter, grid.lineage + [str(cell_name_counter)])
+                grid_B = Grid(grid.Max_Width, division_line + 1, grid.Max_Length, grid.Min_Length, cell_name_counter + 1, grid.lineage + [str(cell_name_counter + 1)])
+
+                positions, cells = redistribute_pp(positions, cells, grid_A, division_line, grid.centrosome_pos_direction)
+                positions, cells = redistribute_pp(positions, cells, grid_B, division_line + 1, grid.centrosome_pos_direction)
+
+                grids.append(grid_A)
+                grids.append(grid_B)
 
                 split_cells.append((division_line + 1, division_line + 1, grid.Min_Length, grid.Max_Length + 1))
                 grids.remove(grid)
             else:
                 division_line = abs(grid.centrosome_pos[1] + grid.centrosome_neg[1]) // 2
-                grids.append(Grid(grid.Max_Width, grid.Min_Width, grid.Max_Length, division_line + 1))
-                grids.append(Grid(grid.Max_Width, grid.Min_Width, division_line, grid.Min_Length))
+                grid_A = Grid(grid.Max_Width, grid.Min_Width, grid.Max_Length, division_line + 1, cell_name_counter, grid.lineage + [str(cell_name_counter)])
+                grid_B = Grid(grid.Max_Width, grid.Min_Width, division_line, grid.Min_Length, cell_name_counter + 1, grid.lineage + [str(cell_name_counter + 1)])
+
+                positions, cells = redistribute_pp(positions, cells, grid_A, division_line + 1, grid.centrosome_pos_direction)
+                positions, cells = redistribute_pp(positions, cells, grid_B, division_line, grid.centrosome_pos_direction)
+
+                grids.append(grid_A)
+                grids.append(grid_B)
 
                 split_cells.append((grid.Min_Width, grid.Max_Width + 1, division_line + 1, division_line + 1))
                 grids.remove(grid)
 
             centrosome_threshold *= centrosome_threshold_multiplier
+
+            cell_name_counter += 2
     
-    return grids, split_cells, centrosome_threshold
+    return positions, cells, grids, split_cells, centrosome_threshold, cell_name_counter
+
+def redistribute_pp(positions, cells, grid, new_edge, side):
+    proteins = set()
+    on_membrane = set()
+    new_additions = []
+
+    for pos in grid.positions:
+        col, row = pos
+        if cells["{}, {}".format(col, row)].polarity_protein_A or cells["{}, {}".format(col, row)].polarity_protein_B:
+            proteins.add(pos)
+
+    for protein in proteins:
+        col, row = protein
+        if col == grid.Min_Width or col == grid.Max_Width or row == grid.Min_Length or row == grid.Max_Length:
+            on_membrane.add(protein)
+            
+    top = []
+    left = []
+    bottom = []
+    right = []
+
+    for i in range(grid.Min_Width, grid.Max_Width + 1):
+        top.append((i, grid.Min_Length))
+    top.sort()
+    top.reverse()
+
+    for i in range(grid.Min_Length, grid.Max_Length + 1):
+        left.append((grid.Min_Width, i))
+    left.sort() 
+
+    for i in range(grid.Min_Width, grid.Max_Width + 1):
+        bottom.append((i, grid.Max_Length))
+    bottom.sort()
+
+    for i in range(grid.Min_Length, grid.Max_Length + 1):
+        right.append((grid.Max_Width, i))
+    right.sort()
+    right.reverse()
+
+    if new_edge == grid.Max_Width and (side == "left" or side == "right"):
+        now = top + left + bottom
+        now.remove((grid.Min_Width, grid.Min_Length))
+        now.remove((grid.Min_Width, grid.Max_Length))
+
+        half = len(right) // 2
+        all = right[half:] + now + right[:half]
+        all.remove((grid.Max_Width, grid.Min_Length))
+        all.remove((grid.Max_Width, grid.Max_Length))
+
+        max = 200
+        min = -200
+
+        for position in right:
+            x, y = position
+            if (cells["{}, {}".format(x, y)].polarity_protein_A or cells["{}, {}".format(x, y)].polarity_protein_B) and (y != grid.Min_Length and y != grid.Max_Length):
+                if y <= right[half][1] and y > min:
+                    min = y
+                if y > right[half][1] and y < max:
+                    max = y
+
+        if min != -200:
+            new = []
+            for i in range(min, grid.Min_Length, -1):
+                new.append((grid.Max_Width, i))
+            now = new + now
+        
+        if max != 200:
+            new = []
+            for i in range(max, grid.Max_Length):
+                new.append((grid.Max_Width, i))
+            new.reverse()
+            now = now + new
+
+    elif new_edge == grid.Min_Length and (side == "up" or side == "down"):
+        now = left + bottom + right
+        now.remove((grid.Max_Width, grid.Max_Length))
+        now.remove((grid.Min_Width, grid.Max_Length))
+
+        half = len(top) // 2
+        all = top[half:] + now + top[:half]
+        all.remove((grid.Max_Width, grid.Min_Length))
+        all.remove((grid.Min_Width, grid.Min_Length))
+
+        min = -200
+        max = 200
+
+        for position in top:
+            x, y = position
+            if (cells["{}, {}".format(x, y)].polarity_protein_A or cells["{}, {}".format(x, y)].polarity_protein_B) and (x != grid.Min_Width and x != grid.Max_Width):
+                if x <= top[half][1] and x > min:
+                    min = x
+                if x > top[half][1] and x < max:
+                    max = x
+
+        if min != -200:
+            new = []
+            for i in range(min, grid.Min_Width, -1):
+                new.append((i, grid.Min_Length))
+            now = new + now
+        
+        if max != 200:
+            new = []
+            for i in range(max, grid.Max_Width):
+                new.append((i, grid.Min_Length))
+            new.reverse()
+            now = now + new
+
+    elif new_edge == grid.Min_Width and (side == "left" or side == "right"):
+        now = bottom + right + top
+        now.remove((grid.Max_Width, grid.Max_Length))
+        now.remove((grid.Max_Width, grid.Min_Length))
+
+        half = len(left) // 2
+        all = left[half:] + now + left[:half]
+        all.remove((grid.Min_Width, grid.Min_Length))
+        all.remove((grid.Min_Width, grid.Max_Length))
+
+        max = 200
+        min = -200
+
+        for position in left:
+            x, y = position
+            if (cells["{}, {}".format(x, y)].polarity_protein_A or cells["{}, {}".format(x, y)].polarity_protein_B) and (y != grid.Min_Length and y != grid.Max_Length):
+                if y < left[half][1] and y > min:
+                    min = y
+                if y >= left[half][1] and y < max:
+                    max = y
+
+        if min != -200:
+            new = []
+            for i in range(min, grid.Min_Length, -1):
+                new.append((grid.Min_Width, i))
+            new.reverse()
+            now = now + new
+        
+        if max != 200:
+            new = []
+            for i in range(max, grid.Max_Length):
+                new.append((grid.Min_Width, i))
+            now = new + now
+
+    elif new_edge == grid.Max_Length and (side == "up" or side == "down"):
+        now = right + top + left
+        now.remove((grid.Max_Width, grid.Min_Length))
+        now.remove((grid.Min_Width, grid.Min_Length))
+
+        half = len(bottom) // 2
+        all = bottom[half:] + now + bottom[:half]
+        all.remove((grid.Max_Width, grid.Max_Length))
+        all.remove((grid.Min_Width, grid.Max_Length))
+
+        max = 200
+        min = -200
+
+        for position in bottom:
+            x, y = position
+            if (cells["{}, {}".format(x, y)].polarity_protein_A or cells["{}, {}".format(x, y)].polarity_protein_B) and (x != grid.Min_Width and x != grid.Max_Width):
+                if x < bottom[half][1] and x > min:
+                    min = x
+                if x >= bottom[half][1] and x < max:
+                    max = x
+
+        if min != -200:
+            new = []
+            for i in range(min, grid.Min_Width, -1):
+                new.append((i, grid.Max_Length))
+            new.reverse()
+            now = now + new
+        
+        if max != 200:
+            new = []
+            for i in range(max, grid.Max_Width):
+                new.append((i, grid.Max_Length))
+            now = new + now
+
+    for pp in on_membrane:
+        x, y = pp
+        me = cells["{}, {}".format(x, y)]
+
+        place = now.index(pp)
+        relative = place/len(now)
+        new_place = all[int(relative * len(all)) - 1]
+
+        adict = {"A": False,  "B": False}
+
+        if me.polarity_protein_A:
+            adict["A"] = True
+        if me.polarity_protein_B:   
+            adict["B"] = True
+
+        me.polarity_protein_A = False
+        me.polarity_protein_B = False
+        if not me.status and not me.nucleus and not me.centrosome_pos and not me.centrosome_neg:
+            positions.remove(pp)
+
+        new_additions.append((new_place, adict))
+
+    for details in new_additions:
+        position, adict = details
+        x, y = position
+
+        positions.add(position)
+        if adict["A"] == True:
+            cells["{}, {}".format(x, y)].polarity_protein_A = True
+        if adict["B"] == True:
+            cells["{}, {}".format(x, y)].polarity_protein_B = True
+
+    return positions, cells
+
+def differentiate(grids, cells):
+    for grid in grids:
+        if grid.can_divide == False:
+            blacks = 0
+            greys = 0
+            pp_A = 0
+            pp_B = 0
+
+            for position in grid.positions:
+                x, y = position
+                me = cells["{}, {}".format(x, y)]
+
+                if me.status == 1:
+                    blacks += 1
+                elif me.status == 2:
+                    greys += 1
+                if me.polarity_protein_A:
+                    pp_A += 1
+                if me.polarity_protein_B:
+                    pp_B += 1
+
+            if greys >= 7:
+                grid.differentiated_type = 1
+            elif blacks >= 10:
+                grid.differentiated_type = 2
+            else:
+                grid.differentiated_type = 3
