@@ -5,9 +5,11 @@ from datetime import datetime
 from Classes_and_Grids import Grid, new_cells_obj
 from Classes_and_Grids import HEIGHT, WIDTH, TILE_SIZE, GRID_HEIGHT, GRID_WIDTH, clock, FPS, screen, LBLUE, black_btn, grey_btn, nuc_btn, pp_btn
 from Classes_and_Grids import gen, draw_grid
-from Cytoplasmic_Determinant_Movement import grouping, adjust_grid, shifting, get_total_energy
-from Output import make_png, make_mp4, plot_it
-from Splitting_Process import move_pp_A, move_pp_B, double_nucleus, move_centrosomes, move_nuclei, divide_cells
+from Classes_and_Grids import I_to_I, II_to_II, I_to_II
+from Cytoplasmic_Determinant_Movement import grouping, adjust_grid, get_total_energy
+from Output import make_png, make_mp4, plot_it, make_tree, save_data
+from Splitting_Process import move_pp_A, move_pp_B, double_nucleus, move_centrosomes, move_nuclei, divide_cells, differentiate
+from Splitting_Process import p_to_c_differ_rate, p_to_c_match_rate
 
 
 #initiate pygame
@@ -44,13 +46,12 @@ def main():
     count = 0
     update_freq = 30
 
-    shift_count = 0
-    shift_freq = 140
-
     num = 0
     time = 0
     x_coord = []
     y_coord = []
+
+    cell_name_counter = 1
 
     #Some flags/toggles
     sanity_checks = False
@@ -62,7 +63,7 @@ def main():
 
     #creates a list of grids and the initial grid
     grids = []
-    grids.append(Grid(GRID_WIDTH - 1, 0, GRID_HEIGHT - 1, 0))
+    grids.append(Grid(GRID_WIDTH - 1, 0, GRID_HEIGHT - 1, 0, 0, [str(0)]))
 
     #creates the cell objects for the grid
     cells = new_cells_obj(grids)
@@ -71,13 +72,13 @@ def main():
     positions = set()
 
     #initializes a color to add
-    add_color = "black"
+    add_color = "nuc"
 
     #parameters
     distance_scaler = 30
     pp_attraction_factor = -30
-    pp_repulsion_factor = 50
-    centrosome_threshold = -10000
+    pp_repulsion_factor = 150
+    centrosome_threshold = -1000
     centrosome_threshold_multiplier = 1.2
 
     #initializes a path for the all information to go to
@@ -87,10 +88,15 @@ def main():
 
     fname = path + 'parameters'
     file = open(fname, "w")
-    file.write("distance scaler = {}\n".format(distance_scaler))
-    file.write("polarity protein attraction factor = {}\n".format(pp_attraction_factor))
-    file.write("polarity protein repulsion factor = {}\n".format(pp_repulsion_factor))
-    file.write("centrosome threshold and multiplier = {} : {}\n".format(centrosome_threshold, centrosome_threshold_multiplier))
+    file.write("Distance scaler = {}\n".format(distance_scaler))
+    file.write("Polarity protein attraction factor = {}\n".format(pp_attraction_factor))
+    file.write("Polarity protein repulsion factor = {}\n".format(pp_repulsion_factor))
+    file.write("Centrosome I to I rate = {}\n".format(I_to_I))
+    file.write("Centrosome II to II rate = {}\n".format(II_to_II))
+    file.write("Centrosome I to II rate = {}\n".format(I_to_II))
+    file.write("Centrosome threshold and multiplier = {} : {}\n".format(centrosome_threshold, centrosome_threshold_multiplier))
+    file.write("Like Centrosome - Polarity Protein rate = {}\n".format(p_to_c_match_rate))
+    file.write("Different Centrosome - Polarity Protein rate = {}\n".format(p_to_c_differ_rate))
     file.close
 
     '''
@@ -108,10 +114,8 @@ def main():
         #checks if the game is no longer paused
         if playing:
             count += 1
-            shift_count += 1
             for grid in grids:
                 grid.time += 1
-            #division_counter += 1
 
         #updates the game according to "speed" set priorly
         if count >= update_freq:
@@ -140,46 +144,14 @@ def main():
 
             link_attributes(positions, cells, grids)
 
-        if sanity_checks:
-            blackies = 0 
-            grey = 0
-            pink = 0
-            A = 0
-            B = 0
-
-            for cell in cells:
-                if cells[cell].status == 1:
-                    blackies += 1
-                elif cells[cell].status == 2:
-                    grey += 1
-                if cells[cell].nucleus:
-                    pink += 1
-                if cells[cell].polarity_protein_A:
-                    A += 1
-                if cells[cell].polarity_protein_B:
-                    B += 1
-
-            print("{}: blacks - {}, grey - {}, pink - {}, A - {}, B - {}".format(time, blackies, grey, pink, A, B))
-
-        if shift_count >= shift_freq:
-            shift_count = 0
-
-            y_coord.append(get_total_energy(cells, positions, distance_scaler))
-            x_coord.append(time)
-            time += 1
-
-            #takes picture
-            num = make_png(screen, path, num)
-            
-            #determines the rule_set
-            positions, cells = shifting(positions, groups, cells, grids)
-
-            link_attributes(positions, cells, grids)
+            differentiate(grids, cells)
 
             if sanity_checks:
                 blackies = 0 
                 grey = 0
                 pink = 0
+                A = 0
+                B = 0
 
                 for cell in cells:
                     if cells[cell].status == 1:
@@ -188,26 +160,16 @@ def main():
                         grey += 1
                     if cells[cell].nucleus:
                         pink += 1
-                    
-                grid_count = {}
-                for grid in grids:
-                    grid_count[grid] = 0
+                    if cells[cell].polarity_protein_A:
+                        A += 1
+                    if cells[cell].polarity_protein_B:
+                        B += 1
 
-                for i in range(GRID_WIDTH):
-                    for j in range(GRID_HEIGHT):
-                        for grid in grids:
-                            if (i, j) in grid.positions:
-                                cells["{}, {}".format(i, j)].grid = grid
-
-                for position in positions:
-                    col, row = position
-                    grid_count[cells["{}, {}".format(col, row)].grid] += 1
-
-                print("shifting at {}: blacks - {}, grey - {}, pink - {}".format(time, blackies, grey, pink))
+                print("{}: blacks - {}, grey - {}, pink - {}, A - {}, B - {}".format(time, blackies, grey, pink, A, B))
 
         positions, cells = double_nucleus(positions, cells, grids)
 
-        grids, split_cells, centrosome_threshold = divide_cells(grids, split_cells, centrosome_threshold, centrosome_threshold_multiplier)
+        positions, cells, grids, split_cells, centrosome_threshold, cell_name_counter = divide_cells(positions, cells, grids, split_cells, centrosome_threshold, centrosome_threshold_multiplier, cell_name_counter)
 
         #initializes a way to see if the game is progressing
         if playing:
@@ -298,16 +260,14 @@ def main():
                     positions = set()
                     cells = new_cells_obj(grids)
                     grids = []
-                    grids.append(Grid(GRID_WIDTH - 1, 0, GRID_HEIGHT - 1, 0))
+                    grids.append(Grid(GRID_WIDTH - 1, 0, GRID_HEIGHT - 1, 0, 0, [0]))
                     split_cells = []
                     playing = False
                     count = 0
-                    shift_count = 0
-                    division_counter = 0
 
                 #generates a random set of positions
                 if event.key == pygame.K_g:
-                    (positions, cells) = gen(random.randrange(3, 5) * GRID_WIDTH, grids)
+                    (positions, cells) = gen(4 * GRID_WIDTH, grids)
                     print("new generation")
 
                 #toggles grouping
@@ -333,6 +293,12 @@ def main():
 
     #makes and saves the chart
     plot_it(path, x_coord, y_coord)
+
+    #makes the lineage tree
+    make_tree(grids, path)
+
+    #saves the data
+    #save_data(grids)
 
     pygame.quit()
 
