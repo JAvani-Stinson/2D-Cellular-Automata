@@ -76,7 +76,7 @@ def adjust_grid(positions, cells, grids, distance_scaler):
             new_positions.add(position)
             new_cells["{}, {}".format(col, row)].centrosome_pos = True
 
-        if not ((cells["{}, {}".format(col, row)].nucleus or cells["{}, {}".format(col, row)].polarity_protein_A or cells["{}, {}".format(col, row)].polarity_protein_B) and cells["{}, {}".format(col, row)].status == 0):
+        if not ((cells["{}, {}".format(col, row)].nucleus or cells["{}, {}".format(col, row)].polarity_protein_A or cells["{}, {}".format(col, row)].polarity_protein_B or cells["{}, {}".format(col, row)].centrosome_pos or cells["{}, {}".format(col, row)].centrosome_neg) and cells["{}, {}".format(col, row)].status == 0):
         
             #initializes some high energies 
             directions = [(float('inf'), "left"), (float('inf'), "right"), (float('inf'), "up"), (float('inf'), "down"), (float('inf'), "leftup"), (float('inf'), "leftdown"), (float('inf'), "rightup"), (float('inf'), "rightdown"), (cells["{}, {}".format(col, row)].get_energy(positions, cells, distance_scaler), "stay")]
@@ -205,23 +205,28 @@ def shifting(positions, groups, cells, grids):
         if cells[cell].nucleus:
             new_positions.add((cells[cell].i, cells[cell].j))
             new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].nucleus = True
-            amalg.add((cells[cell].i, cells[cell].j))
+            if cells[cell].status == 0:
+                amalg.add((cells[cell].i, cells[cell].j))
         if cells[cell].polarity_protein_A:
             new_positions.add((cells[cell].i, cells[cell].j))
             new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].polarity_protein_A = True
-            amalg.add((cells[cell].i, cells[cell].j))
+            if cells[cell].status == 0:
+                amalg.add((cells[cell].i, cells[cell].j))
         if cells[cell].polarity_protein_B:
             new_positions.add((cells[cell].i, cells[cell].j))
             new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].polarity_protein_B = True
-            amalg.add((cells[cell].i, cells[cell].j))
+            if cells[cell].status == 0:
+                amalg.add((cells[cell].i, cells[cell].j))
         if cells[cell].centrosome_pos:
             new_positions.add((cells[cell].i, cells[cell].j))
             new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].centrosome_pos = True
-            amalg.add((cells[cell].i, cells[cell].j))
+            if cells[cell].status == 0:
+                amalg.add((cells[cell].i, cells[cell].j))
         if cells[cell].centrosome_neg:
             new_positions.add((cells[cell].i, cells[cell].j))
             new_cells["{}, {}".format(cells[cell].i, cells[cell].j)].centrosome_neg = True
-            amalg.add((cells[cell].i, cells[cell].j))
+            if cells[cell].status == 0:
+                amalg.add((cells[cell].i, cells[cell].j))
 
     for group in groups:
         amalg = amalg.union(group)
