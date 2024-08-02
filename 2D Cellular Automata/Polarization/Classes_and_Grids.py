@@ -10,10 +10,15 @@ LBLUE = (173, 216, 230)
 
 #initial conditions for the playable grid
 WIDTH, HEIGHT = 900, 900
-TILE_SIZE = 20
+TILE_SIZE = 25
 GRID_WIDTH = WIDTH // TILE_SIZE
 GRID_HEIGHT = HEIGHT // TILE_SIZE
 FPS = 60
+
+#inital parameters
+I_to_I = -20
+II_to_II = -20
+I_to_II = 20
 
 pygame.init()
 
@@ -45,8 +50,8 @@ def gen(num, grids):
     cells = new_cells_obj(grids)
 
     #randomly generation positions within grid restraints
-    positions = set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num)])
-    polarity_proteins = set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num - 4)])
+    positions = set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num + 10)])
+    polarity_proteins = set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num - 1)])
 
     #updates the new cell objects
     for position in positions:
@@ -133,19 +138,37 @@ def draw_grid(positions, cells, sanity_checks, color_groups, color_grids, split_
                     pygame.draw.rect(screen, (100, 0, 0), (*top_left, TILE_SIZE, TILE_SIZE))
                 elif cells["{}, {}".format(col, row)].polarity_protein_B:
                     pygame.draw.rect(screen, (200, 0, 0), (*top_left, TILE_SIZE, TILE_SIZE))
-       
+
+    for grid in grids:
+        if grid.differentiated_type == 1: #blue
+            for position in grid.positions:
+                col, row = position
+                top_left = (col * TILE_SIZE, row * TILE_SIZE)
+                pygame.draw.rect(screen, (143, 170, 179), (*top_left, TILE_SIZE, TILE_SIZE))
+        elif grid.differentiated_type == 2: #Green
+            for position in grid.positions:
+                col, row = position
+                top_left = (col * TILE_SIZE, row * TILE_SIZE)
+                pygame.draw.rect(screen, (129, 177, 79), (*top_left, TILE_SIZE, TILE_SIZE))
+        elif grid.differentiated_type == 3: #Grey
+            for position in grid.positions:
+                col, row = position
+                top_left = (col * TILE_SIZE, row * TILE_SIZE)
+                pygame.draw.rect(screen, (196, 189, 139), (*top_left, TILE_SIZE, TILE_SIZE))
+    '''
     if sanity_checks:
         for pos in positions:
             col, row = pos
             top_left = (col * TILE_SIZE, row * TILE_SIZE)
             pygame.draw.rect(screen, BLACK, (*top_left, TILE_SIZE, TILE_SIZE))
+    '''
 
     #separates menu from cells
     pygame.draw.line(screen, GREY, ((GRID_HEIGHT) * TILE_SIZE, 0), ((GRID_HEIGHT) * TILE_SIZE, HEIGHT))
 
     #makes the lines that divide each cell
     for (horizontal_start, horizontal_stop, vertical_start, vertical_stop) in split_cells:
-        pygame.draw.line(screen, GREY, ((horizontal_start) * TILE_SIZE, (vertical_start) * TILE_SIZE), ((horizontal_stop) * TILE_SIZE, (vertical_stop) * TILE_SIZE), 2)
+        pygame.draw.line(screen, BLACK, ((horizontal_start) * TILE_SIZE, (vertical_start) * TILE_SIZE), ((horizontal_stop) * TILE_SIZE, (vertical_stop) * TILE_SIZE), 2)
 
     #adds black button
     pygame.draw.rect(screen, "blue", black_btn)
@@ -177,11 +200,14 @@ def new_cells_obj(grids):
 
 #Create a class for te grid
 class Grid:
-    def __init__(self, max_wid, min_wid, max_len, min_len):
+    def __init__(self, max_wid, min_wid, max_len, min_len, name, lineage):
         self.Max_Width = max_wid
         self.Min_Width = min_wid
         self.Max_Length = max_len
         self.Min_Length = min_len
+
+        self.name = name
+        self.lineage = lineage
 
         self.time = 0
         self.splitting = False
@@ -204,10 +230,12 @@ class Grid:
             for j in range(self.Min_Length, self.Max_Length + 1):
                 self.positions.add((i, j))
 
-        if len(self.positions) <= 40:
+        if len(self.positions) <= 150:
             self.can_divide = False
         else:
             self.can_divide = True
+
+        self.differentiated_type = 0
 
 #Create a class for the cells by location on grid
 class Cell:
@@ -239,17 +267,17 @@ class Cell:
 
                 if self.status == 1:
                     if other.status == 1:
-                        rate = -20
+                        rate = I_to_I
                     elif other.status == 2:
-                        rate = 20
+                        rate = I_to_II
                     else:
                         rate = 0
 
                 elif self.status == 2:
                     if other.status == 1:
-                        rate = 20
+                        rate = I_to_II
                     elif other.status == 2:
-                        rate = -20
+                        rate = II_to_II
                     else:
                         rate = 0
 
